@@ -1,0 +1,52 @@
+{
+  "name": "@interlay/icons",
+  "version": "0.0.6",
+  "description": "Interlay UI icons, commonly used in components",
+  "homepage": "https://github.com/interlay/ui#readme",
+  "license": "MIT",
+  "keywords": [
+    "interlay",
+    "interlay ui",
+    "icons",
+    "components"
+  ],
+  "main": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interlay/ui.git",
+    "directory": "packages/icons/common"
+  },
+  "bugs": {
+    "url": "https://github.com/interlay/ui/issues"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup src/index.ts --dts",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "@interlay/theme": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "styled-components": ">=6.0.0"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "clean-package": "../../../clean-package.config.json"
+}

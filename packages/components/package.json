@@ -1,0 +1,101 @@
+{
+  "name": "@interlay/ui",
+  "version": "0.0.7",
+  "description": "Interlay UI library.",
+  "homepage": "https://github.com/interlay/ui#readme",
+  "license": "MIT",
+  "keywords": [
+    "interlay",
+    "interlay ui",
+    "components",
+    "modern components",
+    "react components",
+    "react ui"
+  ],
+  "main": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interlay/ui.git",
+    "directory": "packages/components"
+  },
+  "bugs": {
+    "url": "https://github.com/interlay/ui/issues"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup src/index.ts --dts",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "@interlay/coin-icons": "workspace:*",
+    "@interlay/hooks": "workspace:*",
+    "@interlay/icons": "workspace:*",
+    "@interlay/system": "workspace:*",
+    "@interlay/theme": "workspace:*",
+    "@react-aria/accordion": "3.0.0-alpha.20",
+    "@react-aria/breadcrumbs": "^3.5.4",
+    "@react-aria/button": "^3.8.1",
+    "@react-aria/dialog": "^3.5.4",
+    "@react-aria/focus": "^3.14.0",
+    "@react-aria/gridlist": "^3.6.0",
+    "@react-aria/i18n": "^3.8.1",
+    "@react-aria/interactions": "^3.17.0",
+    "@react-aria/label": "^3.6.1",
+    "@react-aria/link": "^3.5.3",
+    "@react-aria/meter": "^3.4.4",
+    "@react-aria/overlays": "^3.16.0",
+    "@react-aria/progress": "^3.4.4",
+    "@react-aria/select": "^3.12.0",
+    "@react-aria/selection": "^3.16.2",
+    "@react-aria/separator": "^3.3.4",
+    "@react-aria/slider": "^3.6.0",
+    "@react-aria/switch": "^3.5.3",
+    "@react-aria/table": "^3.11.0",
+    "@react-aria/tabs": "^3.6.2",
+    "@react-aria/textfield": "^3.11.0",
+    "@react-aria/tooltip": "^3.6.1",
+    "@react-aria/utils": "^3.19.0",
+    "@react-aria/visually-hidden": "^3.8.3",
+    "@react-stately/collections": "^3.10.0",
+    "@react-stately/list": "^3.9.1",
+    "@react-stately/overlays": "^3.6.1",
+    "@react-stately/select": "^3.5.3",
+    "@react-stately/slider": "^3.4.1",
+    "@react-stately/table": "^3.11.0",
+    "@react-stately/tabs": "^3.5.1",
+    "@react-stately/toggle": "^3.6.1",
+    "@react-stately/tooltip": "^3.4.3",
+    "@react-stately/tree": "^3.7.1",
+    "react-transition-group": "^4.4.5"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "styled-components": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@interlay/test-utils": "workspace:*",
+    "@react-types/grid": "^3.2.0",
+    "@react-types/meter": "^3.3.3",
+    "@react-types/shared": "^3.19.0",
+    "@react-types/tabs": "^3.3.2",
+    "@types/react-transition-group": "^4.4.6",
+    "@types/styled-components": "^5.1.26",
+    "clean-package": "^2.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.0.7"
+  },
+  "clean-package": "../../clean-package.config.json"
+}

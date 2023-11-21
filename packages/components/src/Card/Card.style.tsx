@@ -1,0 +1,50 @@
+import styled, { css } from 'styled-components';
+import { theme } from '@interlay/theme';
+import { BorderRadius, CardVariants, Spacing, Variants } from '@interlay/theme';
+
+import { Flex } from '../Flex';
+
+type StyledCardProps = {
+  $variant: CardVariants;
+  $rounded: BorderRadius;
+  $padding: Spacing;
+  $shadowed: boolean;
+  $background: Variants;
+  $isHoverable?: boolean;
+  $isPressable?: boolean;
+};
+
+const StyledCard = styled(Flex)<StyledCardProps>`
+  color: ${theme.colors.textPrimary};
+  background-color: ${({ $background }) => theme.card.bg[$background]};
+  border: ${({ $variant }) => ($variant === 'bordered' ? theme.border.default : theme.card.outlined.border)};
+  border-radius: ${({ $rounded }) => theme.rounded[$rounded]};
+  padding: ${({ $padding }) => theme.spacing[$padding]};
+  cursor: ${({ $isPressable }) => $isPressable && 'pointer'};
+  outline: none;
+
+  ${({ $shadowed }) =>
+    $shadowed &&
+    css`
+      box-shadow: ${theme.boxShadow.default};
+    `}
+
+  ${({ $isHoverable }) =>
+    $isHoverable &&
+    css`
+      &:hover {
+        border: ${theme.border.hover};
+      }
+    `}
+
+  ${({ $isPressable }) =>
+    $isPressable &&
+    css`
+      &:focus {
+        border: ${theme.border.focus};
+        box-shadow: ${theme.boxShadow.focus};
+      }
+    `}
+`;
+
+export { StyledCard };

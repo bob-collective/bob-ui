@@ -1,0 +1,84 @@
+import { forwardRef, useRef } from 'react';
+import { useDOMRef } from '@interlay/hooks';
+
+import { DialogProps } from '../Dialog';
+import { Overlay } from '../Overlay';
+
+import { StyledDialog } from './Modal.style';
+import { ModalContext } from './ModalContext';
+import { ModalWrapper, ModalWrapperProps } from './ModalWrapper';
+
+const isInteractingWithToasts = (element: Element) => {
+  const toastsContainer = document.querySelector('.Toastify');
+
+  if (!toastsContainer) return false;
+
+  return toastsContainer.contains(element);
+};
+
+type Props = {
+  container?: Element;
+  hasMaxHeight?: boolean;
+  align?: 'top' | 'center';
+};
+
+type InheritAttrs = Omit<ModalWrapperProps & DialogProps, keyof Props | 'size' | 'wrapperRef'>;
+
+type ModalProps = Props & InheritAttrs;
+
+const Modal = forwardRef<HTMLDivElement, ModalProps>(
+  (
+    {
+      children,
+      isDismissable = true,
+      align = 'center',
+      hasMaxHeight,
+      isKeyboardDismissDisabled,
+      shouldCloseOnBlur,
+      shouldCloseOnInteractOutside,
+      container,
+      isOpen,
+      ...props
+    },
+    ref
+  ): JSX.Element | null => {
+    const domRef = useDOMRef(ref);
+    const { onClose } = props;
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    const isCentered = align === 'center';
+
+    // Does not allow the modal to close when clicking on toasts
+    const handleShouldCloseOnInteractOutside = (element: Element) =>
+      shouldCloseOnInteractOutside
+        ? shouldCloseOnInteractOutside?.(element) && !isInteractingWithToasts(element)
+        : !isInteractingWithToasts(element);
+
+    return (
+      <ModalContext.Provider value={{ bodyProps: { overflow: isCentered ? 'auto' : undefined } }}>
+        <Overlay container={container} isOpen={isOpen} nodeRef={wrapperRef}>
+          <ModalWrapper
+            ref={domRef}
+            align={align}
+            isDismissable={isDismissable}
+            isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+            isOpen={isOpen}
+            shouldCloseOnBlur={shouldCloseOnBlur}
+            shouldCloseOnInteractOutside={handleShouldCloseOnInteractOutside}
+            wrapperRef={wrapperRef}
+            onClose={onClose}
+          >
+            <StyledDialog $hasMaxHeight={hasMaxHeight} $isCentered={isCentered} $isOpen={isOpen} {...props}>
+              {children}
+            </StyledDialog>
+          </ModalWrapper>
+        </Overlay>
+      </ModalContext.Provider>
+    );
+  }
+);
+
+Modal.displayName = 'Modal';
+
+export { Modal };
+export type { ModalProps };

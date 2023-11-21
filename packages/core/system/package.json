@@ -1,0 +1,51 @@
+{
+  "name": "@interlay/system",
+  "version": "0.0.1",
+  "description": "Interlay UI system primitives.",
+  "homepage": "https://github.com/interlay/ui#readme",
+  "license": "MIT",
+  "keywords": [
+    "interlay",
+    "interlay ui",
+    "system"
+  ],
+  "main": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interlay/ui.git",
+    "directory": "packages/core/system"
+  },
+  "bugs": {
+    "url": "https://github.com/interlay/ui/issues"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup src/index.ts --dts",
+    "prepack": "clean-package",
+    "postpack": "clean-package restore"
+  },
+  "dependencies": {
+    "@react-aria/overlays": "^3.16.0",
+    "@react-aria/i18n": "^3.8.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "clean-package": "^2.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "clean-package": "../../../clean-package.config.json"
+}
