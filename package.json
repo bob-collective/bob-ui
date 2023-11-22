@@ -1,10 +1,10 @@
 {
-  "name": "ui",
+  "name": "bob-ui",
   "private": true,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/interlay/ui"
+    "url": "https://github.com/bob-collective/bob-ui"
   },
   "scripts": {
     "dev": "storybook dev -p 6006",
@@ -16,10 +16,6 @@
     "build": "turbo run build",
     "build:sb": "storybook build",
     "test": "jest --verbose --config ./jest.config.js",
-    "version": "changeset version",
-    "release": "changeset publish",
-    "version:dev": "changeset version --snapshot dev2",
-    "release:dev": "changeset publish --snapshot --no-git-tag --tag dev2",
     "postinstall": "husky install",
     "clean": "pnpm turbo:clean && pnpm clean:jest && pnpm clean:node-modules && pnpm clean:lock && pnpm install",
     "clean:node-modules": "rimraf ./packages/**/**/node_modules && rimraf ./packages/**/node_modules && rm -rf ./node_modules",
@@ -78,7 +74,6 @@
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.1",
     "storybook": "^7.4.0",
-    "tsup": "^7.2.0",
     "turbo": "latest",
     "typescript": ">=3.0.0"
   },
@@ -92,5 +87,9 @@
     "node": ">=18.x",
     "pnpm": ">=8.x"
   },
-  "packageManager": "pnpm@8.7.0"
+  "packageManager": "pnpm@8.7.0",
+  "dependencies": {
+    "@interlay/theme": "^0.0.6",
+    "@interlay/ui": "0.0.6"
+  }
 }

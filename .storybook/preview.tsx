@@ -1,10 +1,8 @@
 import type { Preview } from '@storybook/react';
 
 import React from 'react';
-
-import { InterlayUIProvider } from '../packages/core/system/src';
-import { CSSReset } from '../packages/components/src';
-import '../packages/core/theme/src/css/theme.interlay.css';
+import { InterlayUIProvider, CSSReset } from '@interlay/ui';
+import '@interlay/theme/dist/bob.css';
 import './style.css';
 
 const preview: Preview = {

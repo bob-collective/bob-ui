@@ -1,0 +1,6 @@
+;FFMETADATA1
+[CHAPTER]
+TIMEBASE=1/1000
+START=-44895
+END=2787
+title=connect wallet spec should connect wallet with success

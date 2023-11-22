@@ -1,13 +1,16 @@
 {
-  "name": "@gobob/hooks",
+  "name": "@gobob/wagmi",
   "version": "0.0.0",
-  "description": "Bob UI hooks",
+  "description": "Bob UI library.",
   "homepage": "https://github.com/bob-collective/bob-ui#readme",
   "license": "MIT",
   "keywords": [
     "bob",
-    "bob ui",
-    "hooks"
+    "wagmi",
+    "wagmi components",
+    "wagmi utils",
+    "wagmi hooks",
+    "wagmi config"
   ],
   "main": "src/index.ts",
   "files": [
@@ -19,8 +22,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/interlay/ui.git",
-    "directory": "packages/hooks"
+    "url": "git+https://github.com/bob-collective/bob-ui.git",
+    "directory": "packages/components"
   },
   "bugs": {
     "url": "https://github.com/bob-collective/bob-ui/issues"
@@ -33,10 +36,15 @@
   },
   "peerDependencies": {
     "react": ">=18",
-    "react-dom": ">=18"
+    "react-dom": ">=18",
+    "styled-components": ">=6.0.0"
   },
   "devDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.0.7"
+  },
+  "dependencies": {
+    "wagmi": "^1.4.1"
   }
 }
