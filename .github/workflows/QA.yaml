@@ -6,19 +6,6 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v3
-
-      - name: Install
-        uses: ./.github/common-actions/install
-
-      - name: Build packages
-        run: pnpm build
-
   tests:
     name: Tests
     runs-on: ubuntu-latest
@@ -70,3 +57,30 @@ jobs:
 
       - name: Run prettier
         run: pnpm format:check
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+
+      - name: Install
+        uses: ./.github/common-actions/install
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@248bde77443c376edc45906ede03a1aba9da0462 # pin@v5.8.4
+        with:
+          start: pnpm start:bridge --host
+          command: pnpm test:e2e:ci
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
+          browser: chrome
+          spec: tests/e2e/specs/*
+        env:
+          SECRET_WORDS: 'test test test test test test test test test test test junk'
+          NETWORK_NAME: bob
+          RPC_URL: 'https://l2-fluffy-bob-7mjgi9pmtg.t.conduit.xyz'
+          CHAIN_ID: 901
+          SYMBOL: ETH
+          BLOCK_EXPLORER: 'https://explorerl2-fluffy-bob-7mjgi9pmtg.t.conduit.xyz'

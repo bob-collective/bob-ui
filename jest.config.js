@@ -1,8 +1,9 @@
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: 'jsdom',
-  collectCoverageFrom: ['packages/**/*.{ts,tsx}'],
+  collectCoverageFrom: ['packages/**/*.{ts,tsx}', 'apps/**/*.{ts,tsx}'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  modulePathIgnorePatterns: ['apps/e2e'],
   transform: {
     '^.+\\.(t|j)sx?$': [
       '@swc/jest',
