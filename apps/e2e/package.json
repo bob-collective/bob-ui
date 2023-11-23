@@ -1,5 +1,5 @@
 {
-  "name": "@gobob/ui",
+  "name": "bob-e2e",
   "version": "0.0.0",
   "description": "Bob UI library.",
   "homepage": "https://github.com/bob-collective/bob-ui#readme",
@@ -29,7 +29,9 @@
     "url": "https://github.com/bob-collective/bob-ui/issues"
   },
   "scripts": {
-    "synpress:run": "synpress run"
+    "synpress:run": "synpress run",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --ext ts,tsx --fix"
   },
   "devDependencies": {
     "@synthetixio/synpress": "3.7.2-beta.9",

@@ -1,15 +1,17 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Bridge } from './pages/Bridge';
 import { Header } from '@gobob/ui';
 import { CHAINS, getConfig, useSignMessage } from '@gobob/wagmi';
 import { createWeb3Modal, useWeb3Modal } from '@web3modal/wagmi/react';
 import { CTA } from '@interlay/ui';
+
+import { Bridge } from './pages/Bridge';
 
 createWeb3Modal({ wagmiConfig: getConfig(), projectId: '12856c58adb5d9ec849c38a42d3e152b', chains: CHAINS });
 
 function App() {
   const { signMessage } = useSignMessage();
   const { open } = useWeb3Modal();
+
   return (
     <>
       <Header />
