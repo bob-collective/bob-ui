@@ -1,8 +1,10 @@
 import type { Preview } from '@storybook/react';
 
-import React from 'react';
-import { InterlayUIProvider, CSSReset } from '@interlay/ui';
 import '@interlay/theme/dist/bob.css';
+import { CSSReset, InterlayUIProvider } from '@interlay/ui';
+import React from 'react';
+
+import { WagmiConfig } from '../packages/wagmi/src';
 import './style.css';
 
 const preview: Preview = {
@@ -22,12 +24,14 @@ const preview: Preview = {
         locale && new Intl.Locale(locale)?.textInfo?.direction === 'rtl' ? 'rtl' : undefined;
 
       return (
-        <InterlayUIProvider locale={locale}>
-          <CSSReset />
-          <div dir={direction} lang={locale}>
-            <Story />
-          </div>
-        </InterlayUIProvider>
+        <WagmiConfig>
+          <InterlayUIProvider locale={locale}>
+            <CSSReset />
+            <div dir={direction} lang={locale}>
+              <Story />
+            </div>
+          </InterlayUIProvider>
+        </WagmiConfig>
       );
     }
   ]

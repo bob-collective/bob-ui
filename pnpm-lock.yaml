@@ -290,9 +290,27 @@ importers:
 
   packages/components:
     dependencies:
+      '@gobob/wagmi':
+        specifier: workspace:^
+        version: link:../wagmi
       '@interlay/ui':
         specifier: 0.0.6
         version: 0.0.6(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.1)
+      '@react-aria/button':
+        specifier: ^3.9.0
+        version: 3.9.0(react@18.2.0)
+      '@react-aria/utils':
+        specifier: ^3.21.0
+        version: 3.22.0(react@18.2.0)
+      '@web3modal/wagmi':
+        specifier: ^3.3.2
+        version: 3.3.2(@types/react@18.2.38)(@wagmi/core@1.4.7)(typescript@5.3.2)(viem@1.19.8)
+      react-jazzicon:
+        specifier: ^1.0.4
+        version: 1.0.4(react-dom@18.2.0)(react@18.2.0)
+      react-router-dom:
+        specifier: ^6.16.0
+        version: 6.20.0(react-dom@18.2.0)(react@18.2.0)
     devDependencies:
       react:
         specifier: ^18.2.0
@@ -15265,6 +15283,10 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
+  /mersenne-twister@1.1.0:
+    resolution: {integrity: sha512-mUYWsMKNrm4lfygPkL3OfGzOPTR2DBlTkBNHM//F6hGp8cLThY897crAlk3/Jo17LEOOjQUrNAx6DvgO77QJkA==}
+    dev: false
+
   /methods@1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
     engines: {node: '>= 0.6'}
@@ -16777,6 +16799,17 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: true
+
+  /react-jazzicon@1.0.4(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-/3kWv5vtAhI18GBFoqjpxRTtL+EImuB73PAC02r/zJQ6E+PAUmoBx8edYvTCIYHwS01uFf6N3elTDqSrVPwg4w==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+    dependencies:
+      mersenne-twister: 1.1.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /react-refresh@0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
