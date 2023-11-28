@@ -72,7 +72,7 @@ jobs:
         uses: cypress-io/github-action@248bde77443c376edc45906ede03a1aba9da0462 # pin@v5.8.4
         with:
           start: pnpm start:bridge --host
-          command: pnpm test:e2e:ci
+          command: pnpm test:e2e:ci # TODO: consider running in --headless
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 120
           browser: chrome
@@ -84,3 +84,13 @@ jobs:
           CHAIN_ID: 901
           SYMBOL: ETH
           BLOCK_EXPLORER: 'https://explorerl2-fluffy-bob-7mjgi9pmtg.t.conduit.xyz'
+
+      - name: Archive e2e artifacts
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # pin@v2
+        if: always()
+        with:
+          name: e2e-artifacts
+          path: |
+            apps/e2e/tests/e2e/videos
+            apps/e2e/tests/e2e/screenshots
+        continue-on-error: true
