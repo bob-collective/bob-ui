@@ -193,6 +193,9 @@ importers:
       '@gobob/wagmi':
         specifier: workspace:^
         version: link:../../packages/wagmi
+      '@interlay/coin-icons':
+        specifier: ^0.0.7
+        version: 0.0.7(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.1)
       '@interlay/hooks':
         specifier: ^0.0.7
         version: 0.0.7(react-dom@18.2.0)(react@18.2.0)
@@ -2769,6 +2772,19 @@ packages:
       - styled-components
     dev: false
 
+  /@interlay/coin-icons@0.0.7(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.1):
+    resolution: {integrity: sha512-Xo/YHifZiKPAEJ/geNgnFjm8F4OMRkNsqDaArUHTaHShB/3b1X5ztqNzB7Gay1C35T/NRpuOO1PonV6Msld3QQ==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+    dependencies:
+      '@interlay/icons': 0.0.6(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.1)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    transitivePeerDependencies:
+      - styled-components
+    dev: false
+
   /@interlay/hooks@0.0.6(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-Zx/3bWCp+zGU8L5ENIusvlKjliIePOnHVxzufLliaqCpDx3GrIApUu3eL11D47PpEZVv3ZK4X2a6Ji6sm0B+ww==}
     peerDependencies:
@@ -2811,6 +2827,19 @@ packages:
       styled-components: '>=6.0.0'
     dependencies:
       '@interlay/theme': 0.0.5(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-components: 6.1.1(react-dom@18.2.0)(react@18.2.0)
+    dev: false
+
+  /@interlay/icons@0.0.6(react-dom@18.2.0)(react@18.2.0)(styled-components@6.1.1):
+    resolution: {integrity: sha512-nRqInKBaflm3L1MFhQlGcTvXubvAcxNW2aRGh78qx7iIDgSvfRVGuVRmgPV0tpyLPuD+U3s22rfC0Wm1oGKoBA==}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      styled-components: '>=6.0.0'
+    dependencies:
+      '@interlay/theme': 0.0.6(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       styled-components: 6.1.1(react-dom@18.2.0)(react@18.2.0)

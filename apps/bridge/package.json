@@ -15,6 +15,7 @@
     "@gobob/bob-sdk": "^1.0.3",
     "@gobob/ui": "workspace:^",
     "@gobob/wagmi": "workspace:^",
+    "@interlay/coin-icons": "^0.0.7",
     "@interlay/hooks": "^0.0.7",
     "@interlay/system": "^0.0.1",
     "@interlay/theme": "^0.0.6",

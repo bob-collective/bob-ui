@@ -10,10 +10,6 @@ const StyledLayout = styled(Flex)`
 const StyledHeader = styled(Flex)`
   width: 100%;
   padding: ${theme.spacing.spacing4};
-
-  @media ${theme.breakpoints.up('md')} {
-    padding: 0 ${theme.spacing.spacing12};
-  }
 `;
 
 const StyledLogo = styled(Link)`
@@ -21,17 +17,16 @@ const StyledLogo = styled(Link)`
 `;
 
 const StyledMain = styled(Flex)`
-  margin: ${theme.spacing.spacing6} auto;
+  padding: ${theme.spacing.spacing4};
   width: 100%;
-  padding: 0 ${theme.spacing.spacing4};
-  max-width: ${theme.breakpoints.values.lg}px;
+  margin-left: auto;
+  margin-right: auto;
 
-  @media ${theme.breakpoints.up('md')} {
-    padding: 0 ${theme.spacing.spacing12};
-  }
+  max-width: ${theme.breakpoints.values.md}px;
 `;
 
 const StyledFooter = styled(Flex)`
+  width: 100%;
   padding: ${theme.spacing.spacing4};
 `;
 
