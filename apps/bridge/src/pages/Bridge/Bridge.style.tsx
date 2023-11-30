@@ -6,10 +6,6 @@ const StyledCard = styled(Card)`
   width: 100%;
 `;
 
-const StyledFormWrapper = styled.div`
-  margin-top: ${theme.spacing.spacing8};
-`;
-
 const StyledBridge = styled(Flex)`
   flex-direction: column;
 
@@ -18,4 +14,12 @@ const StyledBridge = styled(Flex)`
   }
 `;
 
-export { StyledCard, StyledFormWrapper, StyledBridge };
+const StyledSection = styled(Flex)`
+  width: 100%;
+
+  @media ${theme.breakpoints.up('md')} {
+    width: 50%;
+  }
+`;
+
+export { StyledCard, StyledSection, StyledBridge };

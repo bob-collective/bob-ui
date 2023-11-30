@@ -1,31 +1,60 @@
-const BRIDGE_AMOUNT = 'bridge-amount';
+import yup, { MaxAmountValidationParams, MinAmountValidationParams } from './yup.custom';
 
-type BridgeFormValues = {
-  [BRIDGE_AMOUNT]?: string;
+const BRIDGE_DEPOSIT_AMOUNT = 'bridge-deposit-amount';
+const BRIDGE_DEPOSIT_GAS_TOKEN = 'bridge-deposit-gas-token';
+
+type BridgeDepositFormValues = {
+  [BRIDGE_DEPOSIT_AMOUNT]?: string;
+  [BRIDGE_DEPOSIT_GAS_TOKEN]?: string;
 };
 
-type BTCIssueValidationParams = { s: never };
+type BridgeDepositFormValidationParams = {
+  [BRIDGE_DEPOSIT_AMOUNT]: MaxAmountValidationParams & MinAmountValidationParams;
+};
 
-// const btcIssueSchema = (params: BTCIssueValidationParams): yup.ObjectSchema<any> =>
-//   yup.object().shape({
-//     [BTC_ISSUE_AMOUNT_FIELD]: yup
-//       .string()
-//       .requiredAmount('issue')
-//       .maxAmount(
-//         params[BTC_ISSUE_AMOUNT_FIELD],
-//         'issue',
-//         i18n.t('forms.amount_must_be_at_most', {
-//           action: 'issue',
-//           amount: params[BTC_ISSUE_AMOUNT_FIELD].maxAmount.toString()
-//         })
-//       )
-//       .minAmount(params[BTC_ISSUE_AMOUNT_FIELD], 'issue'),
-//     [BTC_ISSUE_CUSTOM_VAULT_FIELD]: yup.string().when([BTC_ISSUE_CUSTOM_VAULT_SWITCH], {
-//       is: (isManualVault: string) => isManualVault,
-//       then: (schema) => schema.required(i18n.t('forms.please_select_your_field', { field: 'issue vault' }))
-//     }),
-//     [BTC_ISSUE_SECURITY_DEPOSIT_TOKEN]: yup.string().required(),
-//     [BTC_ISSUE_FEE_TOKEN]: yup.string().required()
-//   });
+const bridgeDepositSchema = (params: BridgeDepositFormValidationParams) =>
+  yup.object().shape({
+    [BRIDGE_DEPOSIT_AMOUNT]: yup
+      .string()
+      .requiredAmount('bridge')
+      .maxAmount(params[BRIDGE_DEPOSIT_AMOUNT], 'bridge')
+      .minAmount(params[BRIDGE_DEPOSIT_AMOUNT], 'bridge'),
+    [BRIDGE_DEPOSIT_GAS_TOKEN]: yup.string().required()
+  });
 
-export type { BridgeFormValues, BTCIssueValidationParams };
+const BRIDGE_WITHDRAW_AMOUNT = 'bridge-withdraw-amount';
+const BRIDGE_WITHDRAW_GAS_TOKEN = 'bridge-withdraw-gas-token';
+
+type BridgeWithdrawFormValues = {
+  [BRIDGE_WITHDRAW_AMOUNT]?: string;
+  [BRIDGE_WITHDRAW_GAS_TOKEN]?: string;
+};
+
+type BridgeWithdrawFormValidationParams = {
+  [BRIDGE_WITHDRAW_AMOUNT]: MaxAmountValidationParams & MinAmountValidationParams;
+};
+
+const bridgeWithdrawSchema = (params: BridgeWithdrawFormValidationParams) =>
+  yup.object().shape({
+    [BRIDGE_WITHDRAW_AMOUNT]: yup
+      .string()
+      .requiredAmount('bridge')
+      .maxAmount(params[BRIDGE_WITHDRAW_AMOUNT], 'bridge')
+      .minAmount(params[BRIDGE_WITHDRAW_AMOUNT], 'bridge'),
+    [BRIDGE_WITHDRAW_GAS_TOKEN]: yup.string().required()
+  });
+
+export {
+  BRIDGE_DEPOSIT_AMOUNT,
+  BRIDGE_DEPOSIT_GAS_TOKEN,
+  BRIDGE_WITHDRAW_AMOUNT,
+  BRIDGE_WITHDRAW_GAS_TOKEN,
+  bridgeDepositSchema,
+  bridgeWithdrawSchema
+};
+export type {
+  BridgeDepositFormValidationParams,
+  BridgeWithdrawFormValidationParams,
+  BridgeDepositFormValues,
+  BridgeWithdrawFormValues
+};

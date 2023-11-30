@@ -1,9 +1,4 @@
-import { Card, Flex, Span, TokenInput } from '@interlay/ui';
-
-import { TransactionDetails } from '../TransactionDetails';
-
-import { StyledChain } from './DepositForm.style';
-
+// FIXME: move to component library
 const ETH = () => (
   <svg
     fill='none'
@@ -28,56 +23,5 @@ const ETH = () => (
   </svg>
 );
 
-const BOB = () => (
-  <svg fill='none' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-    <circle cx='12' cy='12' fill='black' r='11.5' stroke='#C46F08' />
-    <path d='M6.62061 3.3103H11.5861V8.27582H6.62061V3.3103Z' fill='#D9D9D9' />
-    <path d='M6.62061 9.10341H11.5861V14.0689H6.62061V9.10341Z' fill='#D9D9D9' />
-    <path d='M6.62061 14.8965H11.5861V19.862H6.62061V14.8965Z' fill='#D9D9D9' />
-    <path d='M12.4137 9.10341H17.3792V14.0689H12.4137V9.10341Z' fill='#C46F08' />
-    <path d='M12.4137 14.8965H17.3792V19.862H12.4137V14.8965Z' fill='#C46F08' />
-  </svg>
-);
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-type DepositFormProps = {};
-
-// eslint-disable-next-line no-empty-pattern
-const DepositForm = ({}: DepositFormProps): JSX.Element => {
-  return (
-    <Flex direction='column'>
-      <form>
-        <Flex direction='column' gap='spacing6'>
-          <Flex wrap gap='spacing2'>
-            <Flex direction='column' flex={1} gap='spacing1'>
-              <Span size='xs'>From</Span>
-              <Card background='secondary' padding='spacing3' shadowed={false} variant='bordered'>
-                <StyledChain alignItems='center' direction='row' gap='spacing1'>
-                  <ETH />
-                  <Span size='s' weight='semibold'>
-                    Etheruem
-                  </Span>
-                </StyledChain>
-              </Card>
-            </Flex>
-            <Flex direction='column' flex={1} gap='spacing1'>
-              <Span size='xs'>To</Span>
-              <Card background='secondary' padding='spacing3' shadowed={false} variant='bordered'>
-                <StyledChain alignItems='center' direction='row' gap='spacing1'>
-                  <BOB />
-                  <Span size='s' weight='semibold'>
-                    BOB
-                  </Span>
-                </StyledChain>
-              </Card>
-            </Flex>
-          </Flex>
-          <TokenInput label='Amount' placeholder='0.00' ticker='ETH' valueUSD={0} />
-          <TransactionDetails />
-        </Flex>
-      </form>
-    </Flex>
-  );
-};
-
-export { DepositForm };
+// eslint-disable-next-line react-refresh/only-export-components
+export { ETH };

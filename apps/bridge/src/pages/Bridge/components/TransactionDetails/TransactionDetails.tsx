@@ -1,47 +1,54 @@
-import { Card, Dd, Dt, Item, Select, Span, TokenData, TokenListItem } from '@interlay/ui';
+import { Dd, DlProps, Flex, Item, SelectProps, Span, TokenData, TokenListItem } from '@interlay/ui';
 
-import { StyledDl, StyledDlGroup } from './TransactionDetails.style';
+import { StyledDl, StyledDlGroup, StyledDt, StyledSelect } from './TransactionDetails.style';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type TransactionDetailsProps = {};
+type Props = { selectProps?: Omit<SelectProps<TokenData>, 'children'> };
+
+type InheritAttrs = Omit<DlProps, keyof Props>;
+
+type TransactionDetailsProps = Props & InheritAttrs;
 
 // eslint-disable-next-line no-empty-pattern
-const TransactionDetails = ({}: TransactionDetailsProps): JSX.Element => {
+const TransactionDetails = ({ selectProps, ...props }: TransactionDetailsProps): JSX.Element => {
   return (
-    <Card>
-      <StyledDl direction='column' gap='spacing0'>
-        <StyledDlGroup>
-          <Dt>You will receive</Dt>
-          <Dd>0.008678 ETH ($11.00)</Dd>
+    <StyledDl direction='column' gap='spacing0' {...props}>
+      <StyledDlGroup justifyContent='space-between'>
+        <StyledDt color='primary'>You will receive</StyledDt>
+        <Dd>0.008678 ETH ($11.00)</Dd>
+      </StyledDlGroup>
+      <StyledDlGroup justifyContent='space-between'>
+        <StyledDt color='primary'>Transfer time</StyledDt>
+        <Dd>{'< 1 minute'}</Dd>
+      </StyledDlGroup>
+      {selectProps ? (
+        <Flex alignItems='center' justifyContent='space-between'>
+          <Span>Gas Token</Span>
+          <StyledSelect<TokenData>
+            aria-label='select gas token'
+            modalProps={{ title: 'Select Token' }}
+            renderValue={(item) => <Span>{item.value?.value}</Span>}
+            size='small'
+            type='modal'
+            {...selectProps}
+          >
+            {(data: TokenData) => (
+              <Item key={data.value} textValue={data.value}>
+                <TokenListItem {...data} />
+              </Item>
+            )}
+          </StyledSelect>
+        </Flex>
+      ) : (
+        <StyledDlGroup justifyContent='space-between'>
+          <StyledDt color='primary'>Gas Token</StyledDt>
+          <Dd>ETH</Dd>
         </StyledDlGroup>
-        <StyledDlGroup>
-          <Dt>Transfer time</Dt>
-          <Dd>{'< 1 minute'}</Dd>
-        </StyledDlGroup>
-        <Select<TokenData>
-          items={[{ balance: 0, balanceUSD: 0, value: 'ETH' }]}
-          justifyContent='space-between'
-          label='Gas Token'
-          labelPosition='side'
-          labelProps={{}}
-          modalProps={{ title: 'Select Token' }}
-          renderValue={(item) => <Span>{item.value?.value}</Span>}
-          size='small'
-          type='modal'
-          value='ETH'
-        >
-          {(data: TokenData) => (
-            <Item key={data.value} textValue={data.value}>
-              <TokenListItem {...data} />
-            </Item>
-          )}
-        </Select>
-        <StyledDlGroup>
-          <Dt>Estimated Gas</Dt>
-          <Dd>0.000000041 ETH ($0.12)</Dd>
-        </StyledDlGroup>
-      </StyledDl>
-    </Card>
+      )}
+      <StyledDlGroup justifyContent='space-between'>
+        <StyledDt color='primary'>Estimated Gas</StyledDt>
+        <Dd>0.000000041 ETH ($0.12)</Dd>
+      </StyledDlGroup>
+    </StyledDl>
   );
 };
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Dl, DlGroup } from '@interlay/ui';
+import { Dl, DlGroup, Dt, Select } from '@interlay/ui';
 import { theme } from '@interlay/theme';
 
 const StyledDl = styled(Dl)`
@@ -12,17 +12,17 @@ const StyledDl = styled(Dl)`
 
 // This custom padding helps to keep harmony between normal elements and elements with small select
 const StyledDlGroup = styled(DlGroup)`
-  &:first-of-type {
-    padding-bottom: 0.407rem;
-  }
+  line-height: 20px;
+`;
 
-  &:not(:first-of-type):not(:last-of-type) {
-    padding: 0.407rem 0;
-  }
+const StyledDt = styled(Dt)`
+  line-height: 1.875rem;
+`;
 
-  &:last-of-type {
-    padding-top: 0.407rem;
+const StyledSelect = styled(Select)`
+  button {
+    background-color: ${theme.colors.bgPrimary};
   }
 `;
 
-export { StyledDl, StyledDlGroup };
+export { StyledDl, StyledDlGroup, StyledDt, StyledSelect };

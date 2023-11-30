@@ -1,39 +1,29 @@
-import { Flex, H1, H2, P, Tabs, TabsItem, TextLink } from '@interlay/ui';
+import { H1, H2, P, TextLink } from '@interlay/ui';
 
-import { StyledBridge, StyledCard, StyledFormWrapper } from './Bridge.style';
-import { DepositForm, WithdrawForm } from './components';
+import { StyledBridge, StyledCard, StyledSection } from './Bridge.style';
+import { ActivityCard, BridgeForm } from './components';
 
+// TODO: limit activity list to 6 items
 const Bridge = (): JSX.Element => {
   return (
     <StyledBridge gap='spacing4'>
-      <Flex direction='column' flex={1} gap='spacing4'>
+      <StyledSection direction='column' flex='0 0 50%' gap='spacing4'>
         <H1 size='base'>Bridge</H1>
-        <StyledCard gap='spacing2' padding='spacing8'>
-          <Tabs fullWidth size='large'>
-            <TabsItem key='deposit' title='Deposit'>
-              <StyledFormWrapper>
-                <DepositForm />
-              </StyledFormWrapper>
-            </TabsItem>
-            <TabsItem key='withdraw' title='Withdraw'>
-              <StyledFormWrapper>
-                <WithdrawForm />
-              </StyledFormWrapper>
-            </TabsItem>
-          </Tabs>
-        </StyledCard>
-      </Flex>
-      <Flex direction='column' flex={1} gap='spacing4'>
+        <BridgeForm />
+      </StyledSection>
+      <StyledSection direction='column' flex='0 0 50%' gap='spacing4'>
         <H2 size='base'>Activity</H2>
         <StyledCard gap='spacing2'>
           <P align='center' size='xs'>
             No bridging operations in process
           </P>
         </StyledCard>
+        <ActivityCard status='completed' />
+        <ActivityCard status='ongoing' />
         <TextLink external icon size='xs'>
           View All Transactions
         </TextLink>
-      </Flex>
+      </StyledSection>
     </StyledBridge>
   );
 };
