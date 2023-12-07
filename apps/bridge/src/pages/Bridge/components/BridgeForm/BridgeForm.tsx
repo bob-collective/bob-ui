@@ -1,5 +1,5 @@
 import { Tabs, TabsItem } from '@interlay/ui';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { TransactionModal } from '../TransactionModal';
 
@@ -14,9 +14,9 @@ type BridgeFormProps = {};
 const BridgeForm = ({}: BridgeFormProps): JSX.Element => {
   const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
 
-  const handleDeposit = () => {
+  const handleDeposit = useCallback(() => {
     setTransactionModalOpen(true);
-  };
+  }, []);
 
   const handleClose = () => {
     setTransactionModalOpen(false);

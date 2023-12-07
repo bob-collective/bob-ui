@@ -12,6 +12,8 @@
     "format:write": "prettier --write src/** --cache"
   },
   "dependencies": {
+    "@eth-optimism/sdk": "^3.1.6",
+    "@ethersproject/providers": "^5.7.2",
     "@gobob/bob-sdk": "^1.0.3",
     "@gobob/ui": "workspace:^",
     "@gobob/wagmi": "workspace:^",
