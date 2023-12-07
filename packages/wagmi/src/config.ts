@@ -4,36 +4,68 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
-const RPC_URL = 'https://l2-fluffy-bob-7mjgi9pmtg.t.conduit.xyz';
-const WSS_URL = 'wss://l2-fluffy-bob-7mjgi9pmtg.t.conduit.xyz';
+const L2_RPC_URL = 'https://l2-puff-bob-jznbxtoq7h.t.conduit.xyz';
+const L2_WSS_URL = 'wss://l2-puff-bob-jznbxtoq7h.t.conduit.xyz';
+const L2_BLOCK_EXPLORER = 'https://explorerl2-puff-bob-jznbxtoq7h.t.conduit.xyz';
+const L2_CHAIN_ID = 111;
+const L2_MULTICALL3_ADDRESS = '0x089b191d95417817389c8eD9075b51a38ca46DE8';
+
+const L1_RPC_URL = 'https://ethereum-sepolia.publicnode.com';
+const L1_WSS_URL = 'wss://ethereum-sepolia.publicnode.com';
+const L1_BLOCK_EXPLORER = 'https://sepolia.etherscan.io';
+const L1_CHAIN_ID = 11155111;
+const L1_MULTICALL3_ADDRESS = '0xcA11bde05977b3631167028862bE2a173976CA11';
 
 const BOB_CHAIN: Chain = {
-  id: 901,
-  name: 'BOB',
-  network: 'bob',
+  id: L2_CHAIN_ID,
+  name: 'BoB Testnet',
+  network: 'BoB Testnet',
   nativeCurrency: {
     decimals: 18,
-    name: 'Bob',
-    symbol: 'BOB'
+    name: 'ETH',
+    symbol: 'ETH'
   },
   rpcUrls: {
-    public: { http: [RPC_URL], webSocket: [WSS_URL] },
-    default: { http: [RPC_URL], webSocket: [WSS_URL] }
+    public: { http: [L2_RPC_URL], webSocket: [L2_WSS_URL] },
+    default: { http: [L2_RPC_URL], webSocket: [L2_WSS_URL] }
   },
   blockExplorers: {
-    default: { name: 'BobScan', url: 'https://explorerl2-fluffy-bob-7mjgi9pmtg.t.conduit.xyz' }
+    default: { name: 'BobScan', url: L2_BLOCK_EXPLORER }
   },
   contracts: {
     multicall3: {
-      address: '0x2d94665b0A08cba915C039b94bA2d6b85B96e4e7'
+      address: L2_MULTICALL3_ADDRESS
     }
   }
 } as const;
 
-const CHAINS = [BOB_CHAIN];
+const SEPOLIA: Chain = {
+  id: L1_CHAIN_ID,
+  name: 'Sepolia',
+  network: 'Sepolia',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH'
+  },
+  rpcUrls: {
+    public: { http: [L1_RPC_URL], webSocket: [L1_WSS_URL] },
+    default: { http: [L1_RPC_URL], webSocket: [L1_WSS_URL] }
+  },
+  blockExplorers: {
+    default: { name: 'EtherScan Sepolia', url: L1_BLOCK_EXPLORER }
+  },
+  contracts: {
+    multicall3: {
+      address: L1_MULTICALL3_ADDRESS
+    }
+  }
+} as const;
+
+const CHAINS = [BOB_CHAIN, SEPOLIA];
 
 const getConfig = () => {
-  const { chains, publicClient, webSocketPublicClient } = configureChains([BOB_CHAIN], [publicProvider()]);
+  const { chains, publicClient, webSocketPublicClient } = configureChains(CHAINS, [publicProvider()]);
 
   return createConfig({
     autoConnect: true,
@@ -70,4 +102,18 @@ const getConfig = () => {
   });
 };
 
-export { BOB_CHAIN, CHAINS, getConfig };
+export {
+  BOB_CHAIN,
+  CHAINS,
+  getConfig,
+  L2_BLOCK_EXPLORER,
+  L2_RPC_URL,
+  L2_WSS_URL,
+  L2_CHAIN_ID,
+  L2_MULTICALL3_ADDRESS,
+  L1_BLOCK_EXPLORER,
+  L1_CHAIN_ID,
+  L1_MULTICALL3_ADDRESS,
+  L1_RPC_URL,
+  L1_WSS_URL
+};
