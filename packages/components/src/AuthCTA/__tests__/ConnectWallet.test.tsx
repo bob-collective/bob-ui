@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import { Header } from '..';
+import { ConnectWallet } from '..';
 
-describe('Header', () => {
+describe('ConnectWallet', () => {
   it('should render correctly', () => {
-    const wrapper = render(<Header>Header</Header>);
+    const wrapper = render(<ConnectWallet />);
 
     expect(() => wrapper.unmount()).not.toThrow();
   });

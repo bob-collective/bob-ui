@@ -17,7 +17,7 @@
     "build:sb": "storybook build",
     "test": "jest --verbose --config ./jest.config.js",
     "start:bridge": "cd apps/bridge && pnpm run dev --port 3000",
-    "test:e2e": "start-server-and-test 'pnpm start:bridge' http-get://localhost:3000 'cd apps/e2e && pnpm synpress:run --headless'",
+    "test:e2e": "start-server-and-test 'pnpm start:bridge' http-get://localhost:3000 'cd apps/e2e && pnpm synpress:run'",
     "test:e2e:ci": "cd apps/e2e && pnpm synpress:run",
     "postinstall": "husky install",
     "clean": "pnpm turbo:clean && pnpm clean:jest && pnpm clean:node-modules && pnpm clean:lock && pnpm install",

@@ -45,6 +45,12 @@
     "styled-components": "^6.0.7"
   },
   "dependencies": {
-    "@interlay/ui": "0.0.6"
+    "@gobob/wagmi": "workspace:^",
+    "@interlay/ui": "0.0.6",
+    "@react-aria/button": "^3.9.0",
+    "@react-aria/utils": "^3.21.0",
+    "@web3modal/wagmi": "^3.3.2",
+    "react-jazzicon": "^1.0.4",
+    "react-router-dom": "^6.16.0"
   }
 }
