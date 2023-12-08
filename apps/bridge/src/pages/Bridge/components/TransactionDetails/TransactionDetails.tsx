@@ -1,24 +1,26 @@
 import { Dd, DlProps, Flex, Item, SelectProps, Span, TokenData, TokenListItem } from '@interlay/ui';
+import { formatEther } from 'viem';
+import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 
 import { StyledDl, StyledDlGroup, StyledDt, StyledSelect } from './TransactionDetails.style';
 
-type Props = { selectProps?: Omit<SelectProps<TokenData>, 'children'> };
+type Props = { message: CrossChainTransferMessage | undefined, selectProps?: Omit<SelectProps<TokenData>, 'children'> };
 
 type InheritAttrs = Omit<DlProps, keyof Props>;
 
 type TransactionDetailsProps = Props & InheritAttrs;
 
 // eslint-disable-next-line no-empty-pattern
-const TransactionDetails = ({ selectProps, ...props }: TransactionDetailsProps): JSX.Element => {
+const TransactionDetails = ({ selectProps, message, ...props }: TransactionDetailsProps): JSX.Element => {
   return (
     <StyledDl direction='column' gap='spacing0' {...props}>
       <StyledDlGroup justifyContent='space-between'>
         <StyledDt color='primary'>You will receive</StyledDt>
-        <Dd>0.008678 ETH ($11.00)</Dd>
+        <Dd>{message?.amount ? formatEther(message?.amount) : 0} ($TODO)</Dd>
       </StyledDlGroup>
       <StyledDlGroup justifyContent='space-between'>
         <StyledDt color='primary'>Transfer time</StyledDt>
-        <Dd>{'< 1 minute'}</Dd>
+        <Dd>{message?.waitTime} sec</Dd>
       </StyledDlGroup>
       {selectProps ? (
         <Flex alignItems='center' justifyContent='space-between'>

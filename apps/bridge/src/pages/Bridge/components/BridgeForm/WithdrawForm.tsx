@@ -25,13 +25,12 @@ enum BridgeEntity {
   EXTERNAL = 'external'
 }
 
-type WithdrawFormProps = { onSubmit: (values: BridgeWithdrawFormValues) => void };
-
-const WithdrawForm = ({ onSubmit }: WithdrawFormProps): JSX.Element => {
+const WithdrawForm = (): JSX.Element => {
   const [entity, setEntity] = useState(BridgeEntity.BOB);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSubmit = async (values: BridgeWithdrawFormValues) => {
-    onSubmit(values);
+    // TODO
   };
 
   const initialValues = useMemo(
@@ -108,11 +107,12 @@ const WithdrawForm = ({ onSubmit }: WithdrawFormProps): JSX.Element => {
                 valueUSD={0}
                 {...mergeProps(form.getFieldProps(BRIDGE_WITHDRAW_AMOUNT))}
               />
-              <TransactionDetails
+              {/* <TransactionDetails
+              message={{} as Cro}
                 selectProps={mergeProps(form.getSelectFieldProps(BRIDGE_WITHDRAW_GAS_TOKEN), {
                   items: [{ balance: 0, balanceUSD: 0, value: 'ETH' }]
                 })}
-              />
+              /> */}
               <AuthCTA disabled={isSubmitDisabled} size='large' type='submit'>
                 Withdraw Asset
               </AuthCTA>

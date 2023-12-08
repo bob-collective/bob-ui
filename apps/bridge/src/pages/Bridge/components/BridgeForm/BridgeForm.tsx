@@ -12,15 +12,6 @@ type BridgeFormProps = {};
 
 // eslint-disable-next-line no-empty-pattern
 const BridgeForm = ({}: BridgeFormProps): JSX.Element => {
-  const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
-
-  const handleDeposit = useCallback(() => {
-    setTransactionModalOpen(true);
-  }, []);
-
-  const handleClose = () => {
-    setTransactionModalOpen(false);
-  };
 
   return (
     <>
@@ -28,17 +19,16 @@ const BridgeForm = ({}: BridgeFormProps): JSX.Element => {
         <Tabs fullWidth size='large'>
           <TabsItem key='deposit' title='Deposit'>
             <StyledFormWrapper>
-              <DepositForm onSubmit={handleDeposit} />
+              <DepositForm  />
             </StyledFormWrapper>
           </TabsItem>
           <TabsItem key='withdraw' title='Withdraw'>
             <StyledFormWrapper>
-              <WithdrawForm onSubmit={handleDeposit} />
+              <WithdrawForm  />
             </StyledFormWrapper>
           </TabsItem>
         </Tabs>
       </StyledCard>
-      <TransactionModal isOpen={isTransactionModalOpen} onClose={handleClose} />
     </>
   );
 };
