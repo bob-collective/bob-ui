@@ -4,7 +4,7 @@ import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 
 import { StyledDl, StyledDlGroup, StyledDt, StyledSelect } from './TransactionDetails.style';
 
-type Props = { message: CrossChainTransferMessage | undefined, selectProps?: Omit<SelectProps<TokenData>, 'children'> };
+type Props = { message: CrossChainTransferMessage | undefined; selectProps?: Omit<SelectProps<TokenData>, 'children'> };
 
 type InheritAttrs = Omit<DlProps, keyof Props>;
 
@@ -16,12 +16,15 @@ const TransactionDetails = ({ selectProps, message, ...props }: TransactionDetai
     <StyledDl direction='column' gap='spacing0' {...props}>
       <StyledDlGroup justifyContent='space-between'>
         <StyledDt color='primary'>You will receive</StyledDt>
-        <Dd>{message?.amount ? formatEther(message?.amount) : 0} ($TODO)</Dd>
+        <Dd>{message?.amount ? formatEther(message?.amount) : 0} ETH ($0.00)</Dd>
       </StyledDlGroup>
-      <StyledDlGroup justifyContent='space-between'>
-        <StyledDt color='primary'>Transfer time</StyledDt>
-        <Dd>{message?.waitTime} sec</Dd>
-      </StyledDlGroup>
+      {message?.waitTime && (
+        <StyledDlGroup justifyContent='space-between'>
+          <StyledDt color='primary'>Transfer time</StyledDt>
+          <Dd>{message.waitTime} sec</Dd>
+        </StyledDlGroup>
+      )}
+
       {selectProps ? (
         <Flex alignItems='center' justifyContent='space-between'>
           <Span>Gas Token</Span>
@@ -48,7 +51,9 @@ const TransactionDetails = ({ selectProps, message, ...props }: TransactionDetai
       )}
       <StyledDlGroup justifyContent='space-between'>
         <StyledDt color='primary'>Estimated Gas</StyledDt>
-        <Dd>0.000000041 ETH ($0.12)</Dd>
+        <Dd>
+          <>{message?.gasEstimate ? formatEther(message.gasEstimate) : 0} ETH ($0.00)</>
+        </Dd>
       </StyledDlGroup>
     </StyledDl>
   );

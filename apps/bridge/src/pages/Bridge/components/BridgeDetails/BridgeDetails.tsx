@@ -1,5 +1,7 @@
 import { Flex, FlexProps, P, Span } from '@interlay/ui';
+import { formatEther } from 'viem';
 
+import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 import { BOB } from '../BOB';
 import { ETH } from '../ETH';
 
@@ -12,7 +14,7 @@ const PointRight = () => (
   </svg>
 );
 
-type Props = { from?: 'ETH' | 'BOB'; to?: 'ETH' | 'BOB' };
+type Props = { message: CrossChainTransferMessage | undefined };
 
 type InheritAttrs = Omit<FlexProps, keyof Props | 'children'>;
 
@@ -20,14 +22,14 @@ type BridgeDetailsProps = Props & InheritAttrs;
 
 // FIXME: remove linting skips and apply props
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const BridgeDetails = ({ from = 'ETH', to = 'BOB', ...props }: BridgeDetailsProps): JSX.Element | null => {
+const BridgeDetails = ({ message, ...props }: BridgeDetailsProps): JSX.Element | null => {
   return (
     <Flex alignSelf='normal' gap='spacing4' {...props}>
       <Flex alignItems='center' alignSelf='normal' gap='spacing6'>
         <Flex alignItems='center' flex={1} gap='spacing2' justifyContent='flex-end'>
           <ETH />
           <Span size='xs' weight='semibold'>
-            Ethereum
+            Sepolia
           </Span>
         </Flex>
         <PointRight />
@@ -40,7 +42,7 @@ const BridgeDetails = ({ from = 'ETH', to = 'BOB', ...props }: BridgeDetailsProp
       </Flex>
       <StyledPill alignItems='center' background='secondary' shadowed={false}>
         <P size='xs' weight='medium'>
-          0.0001 ETH
+          {message?.amount ? formatEther(message.amount) : 0} ETH
         </P>
       </StyledPill>
     </Flex>

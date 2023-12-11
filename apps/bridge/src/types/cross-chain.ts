@@ -2,10 +2,10 @@ import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
 
 interface CrossChainTransferMessage {
   amount: bigint; // in wei
-  waitTime: number; // in seconds
-  direction: MessageDirection;
   gasEstimate: bigint; // in wei
-  status: MessageStatus | null;
+  direction: MessageDirection;
+  waitTime?: number; // in seconds
+  status?: MessageStatus;
   // NOTE: Add gas token later if needed.
 }
 

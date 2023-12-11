@@ -5,7 +5,7 @@ import { mergeProps } from '@react-aria/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { AuthCTA } from '@gobob/ui';
 import { parseEther } from 'viem';
-import { MessageStatus } from '@eth-optimism/sdk';
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
 import {
   BRIDGE_DEPOSIT_AMOUNT,
   BRIDGE_DEPOSIT_GAS_TOKEN,
@@ -51,22 +51,26 @@ const DepositForm = (): JSX.Element => {
       return;
     }
 
-    if (!messenger || !values[BRIDGE_DEPOSIT_AMOUNT]) {
+    if (!messenger || !values[BRIDGE_DEPOSIT_AMOUNT] || !message) {
       return;
     }
 
     setTransactionModalOpen(true);
 
     const amountInGwei = parseEther(values[BRIDGE_DEPOSIT_AMOUNT]);
-    const gasEstimate = await messenger.estimateGas.depositETH(amountInGwei.toString())
-
     const tx = await messenger.depositETH(amountInGwei.toString());
 
+    const [waitTime, status] = await Promise.all([
+      messenger.estimateMessageWaitTimeSeconds(tx),
+      messenger.getMessageStatus(tx)
+    ]);
+
+    setMessage((currentMessage) => (currentMessage ? { ...currentMessage, waitTime, status } : undefined));
     refetchDeposits();
 
     await messenger.waitForMessageStatus(tx.hash, MessageStatus.RELAYED);
-    onDepositSuccess();
-    console.log('relayed');
+
+    setMessage((currentMessage) => (currentMessage ? { ...currentMessage, status: MessageStatus.RELAYED } : undefined));
   };
 
   const initialValues = useMemo(
@@ -93,29 +97,27 @@ const DepositForm = (): JSX.Element => {
 
   const isSubmitDisabled = isFormDisabled(form);
 
-    // TODO: Move to its own hook
-    const [message, setMessage] = useState<CrossChainTransferMessage>()
+  const [message, setMessage] = useState<CrossChainTransferMessage>();
 
-    useEffect(() => {
-      const createMessage = async () => {
-        if (!messenger || !form.values[BRIDGE_DEPOSIT_AMOUNT]) {
-          return;
-        }
-        const amountInGwei = parseEther(form.values[BRIDGE_DEPOSIT_AMOUNT]);
-        const gasEstimate = await messenger.estimateGas.depositETH(amountInGwei.toString())
-        // TODO: not possible to estimate without having the cross-chain message ready
-        // const waitTime = await messenger.estimateMessageWaitTimeSeconds()
-
-        const message = {
-          amount: amountInGwei,
-          gasEstimate: BigInt(gasEstimate.toString()),
-
-        }
-
-        setMessage(message as CrossChainTransferMessage)
+  useEffect(() => {
+    const createMessage = async () => {
+      if (!messenger || !form.values[BRIDGE_DEPOSIT_AMOUNT]) {
+        return;
       }
-      createMessage();
-    }, [form.values, messenger])
+      const amountInGwei = parseEther(form.values[BRIDGE_DEPOSIT_AMOUNT]);
+      const gasEstimate = await messenger.estimateGas.depositETH(amountInGwei.toString());
+
+      const message = {
+        amount: amountInGwei,
+        gasEstimate: BigInt(gasEstimate.toString()),
+        direction: MessageDirection.L1_TO_L2
+      };
+
+      setMessage(message);
+    };
+
+    createMessage();
+  }, [form.values, messenger]);
 
   return (
     <>
@@ -130,7 +132,6 @@ const DepositForm = (): JSX.Element => {
               balance={0}
               label='Amount'
               placeholder='0.00'
-              // TODO: add balance
               humanBalance={ethBalance?.formatted}
               ticker='ETH'
               // TODO: add valueUSD
@@ -138,7 +139,7 @@ const DepositForm = (): JSX.Element => {
               {...mergeProps(form.getFieldProps(BRIDGE_DEPOSIT_AMOUNT))}
             />
             <TransactionDetails
-            message={undefined}
+              message={message}
               selectProps={mergeProps(form.getSelectFieldProps(BRIDGE_DEPOSIT_GAS_TOKEN), {
                 items: [{ balance: 0, balanceUSD: 0, value: 'ETH' }]
               })}
@@ -149,7 +150,7 @@ const DepositForm = (): JSX.Element => {
           </Flex>
         </form>
       </Flex>
-      {/* <TransactionModal isOpen={isTransactionModalOpen} onClose={handleClose} /> */}
+      <TransactionModal isOpen={isTransactionModalOpen} onClose={handleClose} message={message} />
     </>
   );
 };
