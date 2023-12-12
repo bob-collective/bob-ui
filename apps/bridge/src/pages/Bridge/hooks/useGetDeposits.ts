@@ -1,6 +1,6 @@
 import { CrossChainMessenger, MessageStatus, TokenBridgeMessage } from '@eth-optimism/sdk';
 import { useAccount } from '@gobob/wagmi';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@gobob/react-query';
 
 import { HexString } from '../../../types/common';
 import { getDepositWaitTime } from '../constants/bridge';
