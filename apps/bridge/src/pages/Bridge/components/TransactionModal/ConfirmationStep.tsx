@@ -15,7 +15,12 @@ const ConfirmationStep = ({ message, ...props }: ConfirmationStepProps): JSX.Ele
   return (
     <Flex alignItems='center' direction='column' gap='spacing8' {...props}>
       <LoadingSpinner color='secondary' diameter={100} thickness={8} variant='indeterminate' />
-      <BridgeDetails alignItems='center' direction='column' message={message} />
+      <BridgeDetails
+        alignItems='center'
+        amount={message?.amount}
+        direction='column'
+        transferDirection={message?.direction}
+      />
       <Flex alignSelf='normal' direction='column' gap='spacing4'>
         <P align='center' size='xs' weight='medium'>
           Please Confirm transfer in wallet.

@@ -1,15 +1,24 @@
 import { CrossChainMessenger, MessageStatus, TokenBridgeMessage } from '@eth-optimism/sdk';
 import { useAccount } from '@gobob/wagmi';
 import { useQuery } from '@tanstack/react-query';
+
 import { HexString } from '../../../types/common';
+import { getDepositWaitTime } from '../constants/bridge';
+
 import { useCrossChainMessenger } from './useCrossChainMessenger';
 
-const getDepositStatus = (messenger: CrossChainMessenger, message: TokenBridgeMessage): Promise<MessageStatus> => {
-  return messenger.getMessageStatus(message);
+const getDepositStatusAndWaitTime = async (
+  messenger: CrossChainMessenger,
+  message: TokenBridgeMessage
+): Promise<{ status: MessageStatus; waitTime: number }> => {
+  const [status, waitTime] = await Promise.all([messenger.getMessageStatus(message), getDepositWaitTime()]);
+
+  return { status, waitTime };
 };
 
 interface Deposit extends TokenBridgeMessage {
   status: MessageStatus;
+  waitTime: number;
 }
 
 const getDeposits = async (
@@ -18,9 +27,11 @@ const getDeposits = async (
 ): Promise<Array<Deposit>> => {
   if (address && messenger) {
     const depositMessages = await messenger.getDepositsByAddress(address);
-    const statuses = await Promise.all(depositMessages.map((message) => getDepositStatus(messenger, message)));
+    const extraData = await Promise.all(
+      depositMessages.map((message) => getDepositStatusAndWaitTime(messenger, message))
+    );
 
-    const deposits = depositMessages.map((message, index) => ({ ...message, status: statuses[index] }));
+    const deposits = depositMessages.map((message, index) => ({ ...message, ...extraData[index] }));
 
     return deposits;
   }
@@ -35,10 +46,11 @@ const useGetDeposits = () => {
     queryKey: ['user-deposits', address],
     queryFn: () => getDeposits(address, messenger),
     enabled: !!address && !!messenger,
-    refetchInterval: 15 * 1000 // 15 seconds
+    refetchInterval: 5 * 1000 // 15 seconds
   });
 
   return { data: deposits, refetch };
 };
 
 export { useGetDeposits };
+export type { Deposit };

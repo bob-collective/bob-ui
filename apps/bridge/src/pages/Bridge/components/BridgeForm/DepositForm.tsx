@@ -6,6 +6,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { AuthCTA } from '@gobob/ui';
 import { parseEther } from 'viem';
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
+import { L1_CHAIN_ID, useAccount, useNetwork, useSwitchNetwork, useBalance } from '@gobob/wagmi';
+
+import { TransactionDetails } from '../TransactionDetails';
+import { isFormDisabled } from '../../../../lib/form/utils';
 import {
   BRIDGE_DEPOSIT_AMOUNT,
   BRIDGE_DEPOSIT_GAS_TOKEN,
@@ -13,15 +17,13 @@ import {
   BridgeDepositFormValues,
   bridgeDepositSchema
 } from '../../../../lib/form/bridge';
-import { isFormDisabled } from '../../../../lib/form/utils';
-import { TransactionDetails } from '../TransactionDetails';
-
-import { ChainSelect } from './ChainSelect';
-import { L1_CHAIN_ID, useAccount, useNetwork, useSwitchNetwork, useBalance } from '@gobob/wagmi';
 import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
 import { useGetDeposits } from '../../hooks/useGetDeposits';
 import { TransactionModal } from '../TransactionModal';
 import { CrossChainTransferMessage } from '../../../../types/cross-chain';
+import { getDepositWaitTime } from '../../constants/bridge';
+
+import { ChainSelect } from './ChainSelect';
 
 const DepositForm = (): JSX.Element => {
   const { chain } = useNetwork();
@@ -48,6 +50,7 @@ const DepositForm = (): JSX.Element => {
   const handleSubmit = async (values: BridgeDepositFormValues) => {
     if (chain && chain.id !== L1_CHAIN_ID) {
       switchToL1();
+
       return;
     }
 
@@ -60,13 +63,11 @@ const DepositForm = (): JSX.Element => {
     const amountInGwei = parseEther(values[BRIDGE_DEPOSIT_AMOUNT]);
     const tx = await messenger.depositETH(amountInGwei.toString());
 
-    const [waitTime, status] = await Promise.all([
-      messenger.estimateMessageWaitTimeSeconds(tx),
-      messenger.getMessageStatus(tx)
-    ]);
+    refetchDeposits();
+
+    const [waitTime, status] = await Promise.all([getDepositWaitTime(), messenger.getMessageStatus(tx)]);
 
     setMessage((currentMessage) => (currentMessage ? { ...currentMessage, waitTime, status } : undefined));
-    refetchDeposits();
 
     await messenger.waitForMessageStatus(tx.hash, MessageStatus.RELAYED);
 
@@ -110,7 +111,8 @@ const DepositForm = (): JSX.Element => {
       const message = {
         amount: amountInGwei,
         gasEstimate: BigInt(gasEstimate.toString()),
-        direction: MessageDirection.L1_TO_L2
+        direction: MessageDirection.L1_TO_L2,
+        waitTime: getDepositWaitTime()
       };
 
       setMessage(message);
@@ -129,10 +131,10 @@ const DepositForm = (): JSX.Element => {
               <ChainSelect label='To' name='BOB' ticker='BOB' />
             </Flex>
             <TokenInput
-              balance={0}
+              balance={ethBalance?.formatted}
+              humanBalance={ethBalance?.formatted}
               label='Amount'
               placeholder='0.00'
-              humanBalance={ethBalance?.formatted}
               ticker='ETH'
               // TODO: add valueUSD
               valueUSD={0}
@@ -150,7 +152,7 @@ const DepositForm = (): JSX.Element => {
           </Flex>
         </form>
       </Flex>
-      <TransactionModal isOpen={isTransactionModalOpen} onClose={handleClose} message={message} />
+      <TransactionModal isOpen={isTransactionModalOpen} message={message} onClose={handleClose} />
     </>
   );
 };
