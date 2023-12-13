@@ -105,14 +105,15 @@ const WithdrawForm = (): JSX.Element => {
                 ticker='ETH'
                 // TODO: add valueUSD
                 valueUSD={0}
-                {...mergeProps(form.getFieldProps(BRIDGE_WITHDRAW_AMOUNT))}
+                // FIXME: throw in token input component if wrong field getter is passed
+                {...mergeProps(form.getTokenFieldProps(BRIDGE_WITHDRAW_AMOUNT))}
               />
-              {/* <TransactionDetails
-              message={{} as Cro}
+              <TransactionDetails
+                message={undefined}
                 selectProps={mergeProps(form.getSelectFieldProps(BRIDGE_WITHDRAW_GAS_TOKEN), {
                   items: [{ balance: 0, balanceUSD: 0, value: 'ETH' }]
                 })}
-              /> */}
+              />
               <AuthCTA disabled={isSubmitDisabled} size='large' type='submit'>
                 Withdraw Asset
               </AuthCTA>

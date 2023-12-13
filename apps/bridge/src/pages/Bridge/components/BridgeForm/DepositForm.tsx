@@ -7,7 +7,12 @@ import { Flex, TokenInput } from '@interlay/ui';
 import { mergeProps } from '@react-aria/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { parseEther } from 'viem';
+
 import { usePrices } from '@gobob/react-query';
+
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
+import { L1_CHAIN_ID, useAccount, useNetwork, useSwitchNetwork, useBalance } from '@gobob/wagmi';
+
 import Big from 'big.js';
 
 import {
@@ -40,6 +45,8 @@ const DepositForm = (): JSX.Element => {
 
   const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
 
+  const shouldSwitchChain = chain && chain.id !== L1_CHAIN_ID;
+
   const handleClose = () => {
     setTransactionModalOpen(false);
   };
@@ -51,7 +58,7 @@ const DepositForm = (): JSX.Element => {
   };
 
   const handleSubmit = async (values: BridgeDepositFormValues) => {
-    if (chain && chain.id !== L1_CHAIN_ID) {
+    if (shouldSwitchChain) {
       switchToL1();
 
       return;
@@ -79,27 +86,35 @@ const DepositForm = (): JSX.Element => {
 
   const initialValues = useMemo(
     () => ({
-      [BRIDGE_DEPOSIT_AMOUNT]: '',
+      [BRIDGE_DEPOSIT_AMOUNT]: '0',
       [BRIDGE_DEPOSIT_GAS_TOKEN]: 'ETH'
     }),
     []
   );
 
-  // TODO: add correct params
   const params: BridgeDepositFormValidationParams = {
     [BRIDGE_DEPOSIT_AMOUNT]: {
-      maxAmount: new MonetaryAmount(Ethereum, 100000),
-      minAmount: new MonetaryAmount(Ethereum, 0)
+      maxAmount: new MonetaryAmount(
+        Ethereum,
+        ethBalance
+          ? Big(ethBalance.value.toString())
+              .add(1)
+              .div(10 ** ethBalance.decimals)
+          : 0
+      ),
+      minAmount: new MonetaryAmount(Ethereum, Big(1).div(10 ** 18))
     }
   };
 
   const form = useForm<BridgeDepositFormValues>({
     initialValues,
-    validationSchema: bridgeDepositSchema(params),
-    onSubmit: handleSubmit
+    validationSchema: shouldSwitchChain ? undefined : bridgeDepositSchema(params),
+    onSubmit: handleSubmit,
+    validateOnChange: true,
+    validateOnBlur: true
   });
 
-  const isSubmitDisabled = isFormDisabled(form);
+  const isSubmitDisabled = !shouldSwitchChain && isFormDisabled(form);
 
   const [message, setMessage] = useState<CrossChainTransferMessage>();
 
@@ -143,7 +158,7 @@ const DepositForm = (): JSX.Element => {
               placeholder='0.00'
               ticker='ETH'
               valueUSD={valueUSD}
-              {...mergeProps(form.getFieldProps(BRIDGE_DEPOSIT_AMOUNT))}
+              {...mergeProps(form.getTokenFieldProps(BRIDGE_DEPOSIT_AMOUNT))}
             />
             <TransactionDetails
               message={message}
