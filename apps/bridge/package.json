@@ -23,8 +23,7 @@
     "@interlay/icons": "^0.0.6",
     "@interlay/monetary-js": "^0.7.4",
     "@interlay/system": "^0.0.1",
-    "@interlay/theme": "^0.0.6",
-    "@interlay/ui": "0.0.8",
+    "@interlay/ui": "0.0.9",
     "@react-aria/utils": "^3.21.0",
     "@web3modal/wagmi": "^3.3.2",
     "big.js": "^6.2.1",
@@ -32,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
     "styled-components": "^6.0.8",
+    "theme^0.0.7": "link:@interlay/theme^0.0.7",
     "viem": "^1.10.9",
     "vite-plugin-node-polyfills": "^0.15.0",
     "yup": "^0.32.11"
