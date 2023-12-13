@@ -45,7 +45,7 @@ const BridgeStatusBadge = ({
     return (
       <Flex alignItems={alignItems} gap={gap} justifyContent={justifyContent} {...props}>
         <StyledPill $variant='green' alignItems='center' gap='spacing2'>
-          <StyledLoadingSpinner color='secondary' diameter={13} thickness={2} variant='indeterminate' />
+          <StyledLoadingSpinner color='secondary' size='xs' thickness={3} />
           <StyledSpan size='xs' weight='medium'>
             Est » {deposit?.waitTime || 0} seconds
           </StyledSpan>

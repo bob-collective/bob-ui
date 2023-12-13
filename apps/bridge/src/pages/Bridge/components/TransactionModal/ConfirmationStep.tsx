@@ -13,7 +13,7 @@ type ConfirmationStepProps = Props & InheritAttrs;
 const ConfirmationStep = ({ message, ...props }: ConfirmationStepProps): JSX.Element | null => {
   return (
     <Flex alignItems='center' direction='column' gap='spacing8' {...props}>
-      <Spinner color='secondary' thickness={8} />
+      <Spinner color='secondary' size='xl2' thickness={8} />
       <BridgeDetails
         alignItems='center'
         amount={message?.amount}

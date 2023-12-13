@@ -9,6 +9,7 @@ import { mergeProps } from '@react-aria/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { parseEther } from 'viem';
 import Big from 'big.js';
+
 import {
   BRIDGE_DEPOSIT_AMOUNT,
   BRIDGE_DEPOSIT_GAS_TOKEN,
@@ -23,6 +24,7 @@ import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
 import { useGetDeposits } from '../../hooks/useGetDeposits';
 import { TransactionDetails } from '../TransactionDetails';
 import { TransactionModal } from '../TransactionModal';
+
 import { ChainSelect } from './ChainSelect';
 
 const DepositForm = (): JSX.Element => {
@@ -42,6 +44,7 @@ const DepositForm = (): JSX.Element => {
 
   const handleClose = () => {
     setTransactionModalOpen(false);
+    setMessage(undefined);
   };
 
   const switchToL1 = () => {
