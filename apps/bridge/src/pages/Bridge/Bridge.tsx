@@ -1,4 +1,5 @@
 import { MessageStatus } from '@eth-optimism/sdk';
+import { useAccount } from '@gobob/wagmi';
 import { H1, H2, P, TextLink } from '@interlay/ui';
 import { useMemo } from 'react';
 
@@ -8,6 +9,7 @@ import { useGetDeposits } from './hooks/useGetDeposits';
 
 // TODO: limit activity list to 6 items
 const Bridge = (): JSX.Element => {
+  const { address } = useAccount();
   const { data: deposits } = useGetDeposits();
 
   const ongoingDeposits = useMemo(
@@ -50,7 +52,7 @@ const Bridge = (): JSX.Element => {
           completedDeposits.map((deposit) => (
             <ActivityCard key={deposit.transactionHash} deposit={deposit} status='completed' />
           ))}
-        <TextLink external icon size='xs'>
+        <TextLink external href={`https://sepolia.etherscan.io/address/${address}`} icon size='xs'>
           View All Transactions
         </TextLink>
       </StyledSection>

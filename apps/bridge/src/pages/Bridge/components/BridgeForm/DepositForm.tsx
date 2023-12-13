@@ -1,20 +1,14 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
 import { AuthCTA } from '@gobob/ui';
 import { L1_CHAIN_ID, useAccount, useBalance, useNetwork, useSwitchNetwork } from '@gobob/wagmi';
+import { usePrices } from '@gobob/react-query';
 import { useForm } from '@interlay/hooks';
 import { Ethereum, MonetaryAmount } from '@interlay/monetary-js';
 import { Flex, TokenInput } from '@interlay/ui';
 import { mergeProps } from '@react-aria/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { parseEther } from 'viem';
-
-import { usePrices } from '@gobob/react-query';
-
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
-import { L1_CHAIN_ID, useAccount, useNetwork, useSwitchNetwork, useBalance } from '@gobob/wagmi';
-
 import Big from 'big.js';
-
 import {
   BRIDGE_DEPOSIT_AMOUNT,
   BRIDGE_DEPOSIT_GAS_TOKEN,
@@ -29,7 +23,6 @@ import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
 import { useGetDeposits } from '../../hooks/useGetDeposits';
 import { TransactionDetails } from '../TransactionDetails';
 import { TransactionModal } from '../TransactionModal';
-
 import { ChainSelect } from './ChainSelect';
 
 const DepositForm = (): JSX.Element => {
