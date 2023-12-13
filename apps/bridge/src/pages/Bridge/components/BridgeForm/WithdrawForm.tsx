@@ -28,9 +28,8 @@ enum BridgeEntity {
 const WithdrawForm = (): JSX.Element => {
   const [entity, setEntity] = useState(BridgeEntity.BOB);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSubmit = async (values: BridgeWithdrawFormValues) => {
-    // TODO
+  const handleSubmit = async () => {
+    // TODO: pass form values as function arg
   };
 
   const initialValues = useMemo(
