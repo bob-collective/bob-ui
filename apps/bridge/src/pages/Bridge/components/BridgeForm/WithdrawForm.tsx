@@ -25,13 +25,11 @@ enum BridgeEntity {
   EXTERNAL = 'external'
 }
 
-type WithdrawFormProps = { onSubmit: (values: BridgeWithdrawFormValues) => void };
-
-const WithdrawForm = ({ onSubmit }: WithdrawFormProps): JSX.Element => {
+const WithdrawForm = (): JSX.Element => {
   const [entity, setEntity] = useState(BridgeEntity.BOB);
 
-  const handleSubmit = async (values: BridgeWithdrawFormValues) => {
-    onSubmit(values);
+  const handleSubmit = async () => {
+    // TODO: pass form values as function arg
   };
 
   const initialValues = useMemo(
@@ -106,9 +104,11 @@ const WithdrawForm = ({ onSubmit }: WithdrawFormProps): JSX.Element => {
                 ticker='ETH'
                 // TODO: add valueUSD
                 valueUSD={0}
-                {...mergeProps(form.getFieldProps(BRIDGE_WITHDRAW_AMOUNT))}
+                // FIXME: throw in token input component if wrong field getter is passed
+                {...mergeProps(form.getTokenFieldProps(BRIDGE_WITHDRAW_AMOUNT))}
               />
               <TransactionDetails
+                message={undefined}
                 selectProps={mergeProps(form.getSelectFieldProps(BRIDGE_WITHDRAW_GAS_TOKEN), {
                   items: [{ balance: 0, balanceUSD: 0, value: 'ETH' }]
                 })}

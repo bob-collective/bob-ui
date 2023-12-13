@@ -1,5 +1,5 @@
 import { theme } from '@interlay/theme';
-import { Flex, LoadingSpinner, Span } from '@interlay/ui';
+import { Flex, Spinner, Span } from '@interlay/ui';
 import styled from 'styled-components';
 
 type StyledPillProps = {
@@ -18,7 +18,7 @@ const StyledSpan = styled(Span)`
 
 // FIXME: there is a weird conflit when a second spinner is rendered
 // I suggest that temporarly we bring here a spinner instead of using the lib on
-const StyledLoadingSpinner = styled(LoadingSpinner)`
+const StyledLoadingSpinner = styled(Spinner)`
   border-top-color: #101729;
   border-right-color: #101729;
   border-bottom-color: #101729;

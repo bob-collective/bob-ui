@@ -1,8 +1,8 @@
 import { WagmiConfig } from '@gobob/wagmi';
+import { QueryClient, QueryClientProvider } from '@gobob/react-query';
 import { InterlayUIProvider } from '@interlay/system';
 import '@interlay/theme/dist/bob.css';
 import { CSSReset } from '@interlay/ui';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 

@@ -95,7 +95,7 @@
   },
   "packageManager": "pnpm@8.7.0",
   "dependencies": {
-    "@interlay/theme": "^0.0.6",
-    "@interlay/ui": "0.0.6"
+    "@interlay/theme": "^0.0.7",
+    "@interlay/ui": "0.0.9"
   }
 }
