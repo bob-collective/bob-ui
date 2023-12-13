@@ -1,16 +1,20 @@
-import { Flex, TokenInput } from '@interlay/ui';
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
+import { AuthCTA } from '@gobob/ui';
+import { L1_CHAIN_ID, useAccount, useBalance, useNetwork, useSwitchNetwork } from '@gobob/wagmi';
 import { useForm } from '@interlay/hooks';
 import { Ethereum, MonetaryAmount } from '@interlay/monetary-js';
+import { Flex, TokenInput } from '@interlay/ui';
 import { mergeProps } from '@react-aria/utils';
 import { useEffect, useMemo, useState } from 'react';
-import { AuthCTA } from '@gobob/ui';
 import { parseEther } from 'viem';
+
+import { usePrices } from '@gobob/react-query';
+
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
 import { L1_CHAIN_ID, useAccount, useNetwork, useSwitchNetwork, useBalance } from '@gobob/wagmi';
+
 import Big from 'big.js';
 
-import { TransactionDetails } from '../TransactionDetails';
-import { isFormDisabled } from '../../../../lib/form/utils';
 import {
   BRIDGE_DEPOSIT_AMOUNT,
   BRIDGE_DEPOSIT_GAS_TOKEN,
@@ -18,11 +22,13 @@ import {
   BridgeDepositFormValues,
   bridgeDepositSchema
 } from '../../../../lib/form/bridge';
-import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
-import { useGetDeposits } from '../../hooks/useGetDeposits';
-import { TransactionModal } from '../TransactionModal';
+import { isFormDisabled } from '../../../../lib/form/utils';
 import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 import { getDepositWaitTime } from '../../constants/bridge';
+import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
+import { useGetDeposits } from '../../hooks/useGetDeposits';
+import { TransactionDetails } from '../TransactionDetails';
+import { TransactionModal } from '../TransactionModal';
 
 import { ChainSelect } from './ChainSelect';
 
@@ -31,6 +37,7 @@ const DepositForm = (): JSX.Element => {
   const { switchNetwork } = useSwitchNetwork();
   const { address } = useAccount();
   const { data: ethBalance } = useBalance({ address });
+  const { getPrice } = usePrices();
 
   const { deposit: messenger } = useCrossChainMessenger();
 
@@ -132,6 +139,9 @@ const DepositForm = (): JSX.Element => {
     createMessage();
   }, [form.values, messenger]);
 
+  const etherValueUSD = getPrice('ethereum') || 0;
+  const valueUSD = new Big(form.values[BRIDGE_DEPOSIT_AMOUNT] || 0).mul(etherValueUSD).toNumber();
+
   return (
     <>
       <Flex direction='column'>
@@ -147,8 +157,7 @@ const DepositForm = (): JSX.Element => {
               label='Amount'
               placeholder='0.00'
               ticker='ETH'
-              // TODO: add valueUSD
-              valueUSD={0}
+              valueUSD={valueUSD}
               {...mergeProps(form.getTokenFieldProps(BRIDGE_DEPOSIT_AMOUNT))}
             />
             <TransactionDetails
