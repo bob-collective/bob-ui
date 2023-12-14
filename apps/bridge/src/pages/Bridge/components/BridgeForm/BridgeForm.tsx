@@ -2,7 +2,6 @@ import { Tabs, TabsItem } from '@interlay/ui';
 
 import { StyledCard, StyledFormWrapper } from './BridgeForm.style';
 import { DepositForm } from './DepositForm';
-import { WithdrawForm } from './WithdrawForm';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type BridgeFormProps = {};
@@ -18,11 +17,12 @@ const BridgeForm = ({}: BridgeFormProps): JSX.Element => {
               <DepositForm />
             </StyledFormWrapper>
           </TabsItem>
-          <TabsItem key='withdraw' title='Withdraw'>
+          {/* TODO: Show Withdraw tab when withdrawal is implemented. */}
+          {/* <TabsItem key='withdraw' title='Withdraw'>
             <StyledFormWrapper>
               <WithdrawForm />
             </StyledFormWrapper>
-          </TabsItem>
+          </TabsItem> */}
         </Tabs>
       </StyledCard>
     </>
