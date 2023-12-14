@@ -31,7 +31,7 @@ const DepositForm = (): JSX.Element => {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
   const { address } = useAccount();
-  const { data: ethBalance } = useBalance({ address });
+  const { data: ethBalance } = useBalance({ address, chainId: L1_CHAIN_ID });
   const { getPrice } = usePrices();
 
   const { deposit: messenger } = useCrossChainMessenger();
