@@ -1,5 +1,5 @@
 import { theme } from '@interlay/theme';
-import { Flex, TextLink } from '@interlay/ui';
+import { Flex, Span, TextLink } from '@interlay/ui';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -14,6 +14,11 @@ const StyledHeader = styled(Flex)`
 
 const StyledLogo = styled(Link)`
   display: inline-flex;
+`;
+
+// TODO: Create UI badge component
+const StyledBadge = styled(Span)`
+  color: rgba(255, 255, 255, 1);
 `;
 
 const StyledMain = styled(Flex)`
@@ -49,4 +54,13 @@ const StyledSocialItem = styled(TextLink)`
   }
 `;
 
-export { StyledLogo, StyledMain, StyledSocials, StyledHeader, StyledSocialItem, StyledLayout, StyledFooter };
+export {
+  StyledBadge,
+  StyledLogo,
+  StyledMain,
+  StyledSocials,
+  StyledHeader,
+  StyledSocialItem,
+  StyledLayout,
+  StyledFooter
+};
