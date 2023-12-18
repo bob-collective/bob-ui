@@ -12,7 +12,7 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledFormWrapper = styled.div`
-  margin-top: ${theme.spacing.spacing6};
+  /* margin-top: ${theme.spacing.spacing6}; */
 `;
 
 // FIXME: should be able to apply gap on RadioGroup
