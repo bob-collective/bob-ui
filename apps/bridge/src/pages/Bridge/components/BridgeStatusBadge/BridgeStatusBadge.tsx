@@ -1,7 +1,5 @@
 import { Flex, FlexProps, Span, TextLink } from '@interlay/ui';
 
-import { Deposit } from '../../hooks/useGetDeposits';
-
 import { StyledLoadingSpinner, StyledPill, StyledSpan } from './BridgeStatusBadge.style';
 
 // FIXME: rui will fix this later
@@ -21,14 +19,15 @@ const CompleteSVG = () => (
   </svg>
 );
 
-type Props = { status: 'ongoing' | 'completed'; deposit?: Deposit };
+type Props = { status: 'ongoing' | 'completed' | 'failed'; waitTime: number; txUrl: string };
 
 type InheritAttrs = Omit<FlexProps, keyof Props | 'children'>;
 
 type BridgeStatusBadgeProps = Props & InheritAttrs;
 
 const BridgeStatusBadge = ({
-  deposit,
+  txUrl,
+  waitTime,
   status = 'completed',
   justifyContent = 'space-between',
   alignItems = 'center',
@@ -36,7 +35,7 @@ const BridgeStatusBadge = ({
   ...props
 }: BridgeStatusBadgeProps): JSX.Element | null => {
   const viewLink = (
-    <TextLink external icon href={`https://sepolia.etherscan.io/tx/${deposit?.transactionHash}`} size='xs'>
+    <TextLink external icon href={txUrl} size='xs'>
       View
     </TextLink>
   );
@@ -47,7 +46,7 @@ const BridgeStatusBadge = ({
         <StyledPill $variant='green' alignItems='center' gap='spacing2'>
           <StyledLoadingSpinner color='secondary' size='xs' thickness={3} />
           <StyledSpan size='xs' weight='medium'>
-            Est » {deposit?.waitTime || 0} seconds
+            Est » {waitTime} seconds
           </StyledSpan>
         </StyledPill>
         {viewLink}
@@ -58,9 +57,9 @@ const BridgeStatusBadge = ({
   return (
     <Flex alignItems={alignItems} gap={gap} justifyContent={justifyContent} {...props}>
       <StyledPill $variant='normal' alignItems='center' gap='spacing2'>
-        <CompleteSVG />
+        {<CompleteSVG />}
         <Span size='xs' weight='medium'>
-          Bridge complete
+          Bridge {status === 'completed' ? 'complete' : 'failed'}
         </Span>
       </StyledPill>
       {viewLink}

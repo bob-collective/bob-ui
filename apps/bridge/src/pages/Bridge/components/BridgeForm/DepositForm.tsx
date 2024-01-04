@@ -1,15 +1,16 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
+import { usePrices } from '@gobob/react-query';
 import { AuthCTA } from '@gobob/ui';
 import { L1_CHAIN_ID, useAccount, useBalance, useNetwork, useSwitchNetwork } from '@gobob/wagmi';
-import { usePrices } from '@gobob/react-query';
 import { useForm } from '@interlay/hooks';
 import { Ethereum, MonetaryAmount } from '@interlay/monetary-js';
 import { Flex, TokenInput } from '@interlay/ui';
 import { mergeProps } from '@react-aria/utils';
+import Big from 'big.js';
 import { useEffect, useMemo, useState } from 'react';
 import { parseEther } from 'viem';
-import Big from 'big.js';
 
+import { useDebounce } from 'react-use';
 import {
   BRIDGE_DEPOSIT_AMOUNT,
   BRIDGE_DEPOSIT_GAS_TOKEN,
@@ -22,9 +23,9 @@ import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 import { getDepositWaitTime } from '../../constants/bridge';
 import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
 import { useGetDeposits } from '../../hooks/useGetDeposits';
+import { isL1Chain } from '../../utils/chain';
 import { TransactionDetails } from '../TransactionDetails';
 import { TransactionModal } from '../TransactionModal';
-
 import { ChainSelect } from './ChainSelect';
 
 const DepositForm = (): JSX.Element => {
@@ -40,26 +41,41 @@ const DepositForm = (): JSX.Element => {
 
   const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
 
-  const shouldSwitchChain = chain && chain.id !== L1_CHAIN_ID;
+  const [amount, setAmount] = useState('');
+
+  const isValidChain = isL1Chain(chain);
+
+  // useEffect(() => {
+  //   if (!isValidChain) {
+  //     switchNetwork?.(L1_CHAIN_ID);
+  //   }
+  // }, [switchNetwork, isValidChain]);
+
+  const handleChangeInput = async () => {
+    if (!messenger || !form.values[BRIDGE_DEPOSIT_AMOUNT]) {
+      return;
+    }
+    const amountInGwei = parseEther(form.values[BRIDGE_DEPOSIT_AMOUNT]);
+    const gasEstimate = await messenger.estimateGas.depositETH(amountInGwei.toString());
+
+    const message = {
+      amount: amountInGwei,
+      gasEstimate: BigInt(gasEstimate.toString()),
+      direction: MessageDirection.L1_TO_L2,
+      waitTime: getDepositWaitTime()
+    };
+
+    setMessage(message);
+  };
+
+  useDebounce(handleChangeInput, 500, [amount]);
 
   const handleClose = () => {
     setTransactionModalOpen(false);
     setMessage(undefined);
   };
 
-  const switchToL1 = () => {
-    if (switchNetwork) {
-      switchNetwork(L1_CHAIN_ID);
-    }
-  };
-
   const handleSubmit = async (values: BridgeDepositFormValues) => {
-    if (shouldSwitchChain) {
-      switchToL1();
-
-      return;
-    }
-
     if (!messenger || !values[BRIDGE_DEPOSIT_AMOUNT] || !message) {
       return;
     }
@@ -92,11 +108,7 @@ const DepositForm = (): JSX.Element => {
     [BRIDGE_DEPOSIT_AMOUNT]: {
       maxAmount: new MonetaryAmount(
         Ethereum,
-        ethBalance
-          ? Big(ethBalance.value.toString())
-              .add(1)
-              .div(10 ** ethBalance.decimals)
-          : 0
+        ethBalance ? new Big(ethBalance.value.toString()).add(1).div(10 ** ethBalance.decimals) : 0
       ),
       minAmount: new MonetaryAmount(Ethereum, Big(1).div(10 ** 18))
     }
@@ -104,36 +116,15 @@ const DepositForm = (): JSX.Element => {
 
   const form = useForm<BridgeDepositFormValues>({
     initialValues,
-    validationSchema: shouldSwitchChain ? undefined : bridgeDepositSchema(params),
+    validationSchema: isValidChain ? undefined : bridgeDepositSchema(params),
     onSubmit: handleSubmit,
     validateOnChange: true,
     validateOnBlur: true
   });
 
-  const isSubmitDisabled = !shouldSwitchChain && isFormDisabled(form);
+  const isSubmitDisabled = !isValidChain || isFormDisabled(form);
 
   const [message, setMessage] = useState<CrossChainTransferMessage>();
-
-  useEffect(() => {
-    const createMessage = async () => {
-      if (!messenger || !form.values[BRIDGE_DEPOSIT_AMOUNT]) {
-        return;
-      }
-      const amountInGwei = parseEther(form.values[BRIDGE_DEPOSIT_AMOUNT]);
-      const gasEstimate = await messenger.estimateGas.depositETH(amountInGwei.toString());
-
-      const message = {
-        amount: amountInGwei,
-        gasEstimate: BigInt(gasEstimate.toString()),
-        direction: MessageDirection.L1_TO_L2,
-        waitTime: getDepositWaitTime()
-      };
-
-      setMessage(message);
-    };
-
-    createMessage();
-  }, [form.values, messenger]);
 
   const etherValueUSD = getPrice('ethereum') || 0;
   const valueUSD = new Big(form.values[BRIDGE_DEPOSIT_AMOUNT] || 0).mul(etherValueUSD).toNumber();
@@ -154,7 +145,9 @@ const DepositForm = (): JSX.Element => {
               placeholder='0.00'
               ticker='ETH'
               valueUSD={valueUSD}
-              {...mergeProps(form.getTokenFieldProps(BRIDGE_DEPOSIT_AMOUNT))}
+              {...mergeProps(form.getTokenFieldProps(BRIDGE_DEPOSIT_AMOUNT), {
+                onValueChange: (value: string) => setAmount(value)
+              })}
             />
             <TransactionDetails
               message={message}
@@ -163,7 +156,7 @@ const DepositForm = (): JSX.Element => {
               })}
             />
             <AuthCTA disabled={isSubmitDisabled} size='large' type='submit'>
-              {chain?.id === L1_CHAIN_ID ? 'Bridge Asset' : 'Switch to L1'}
+              Bridge Asset
             </AuthCTA>
           </Flex>
         </form>

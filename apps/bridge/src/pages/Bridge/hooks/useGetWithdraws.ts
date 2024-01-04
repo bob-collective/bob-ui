@@ -7,7 +7,7 @@ import { getDepositWaitTime } from '../constants/bridge';
 
 import { useCrossChainMessenger } from './useCrossChainMessenger';
 
-const getDepositStatusAndWaitTime = async (
+const getWithdrawstatusAndWaitTime = async (
   messenger: CrossChainMessenger,
   message: TokenBridgeMessage
 ): Promise<{ status: MessageStatus; waitTime: number }> => {
@@ -16,39 +16,39 @@ const getDepositStatusAndWaitTime = async (
   return { status, waitTime };
 };
 
-interface Deposit extends TokenBridgeMessage {
+interface Withdraw extends TokenBridgeMessage {
   status: MessageStatus;
   waitTime: number;
 }
 
-const getDeposits = async (
+const getWithdraws = async (
   address: HexString | undefined,
   messenger: CrossChainMessenger | undefined
-): Promise<Array<Deposit>> => {
+): Promise<Array<Withdraw>> => {
   if (address && messenger) {
-    const depositMessages = await messenger.getDepositsByAddress(address);
+    const withdrawMessages = await messenger.getWithdrawalsByAddress(address);
     const extraData = await Promise.all(
-      depositMessages.map((message) => getDepositStatusAndWaitTime(messenger, message))
+      withdrawMessages.map((message) => getWithdrawstatusAndWaitTime(messenger, message))
     );
 
-    const deposits = depositMessages.map((message, index) => ({ ...message, ...extraData[index] }));
+    const withdraws = withdrawMessages.map((message, index) => ({ ...message, ...extraData[index] }));
 
-    return deposits;
+    return withdraws;
   }
   throw new Error('Address or messenger client is undefined.');
 };
 
-const useGetDeposits = () => {
-  const { deposit: messenger } = useCrossChainMessenger();
+const useGetWithdraws = () => {
+  const { withdraw: messenger } = useCrossChainMessenger();
   const { address } = useAccount();
 
   return useQuery({
-    queryKey: ['user-deposits', address],
-    queryFn: () => getDeposits(address, messenger),
+    queryKey: ['user-withdraws', address],
+    queryFn: () => getWithdraws(address, messenger),
     enabled: !!address && !!messenger,
     refetchInterval: 5 * 1000 // 15 seconds
   });
 };
 
-export { useGetDeposits };
-export type { Deposit };
+export { useGetWithdraws };
+export type { Withdraw };
