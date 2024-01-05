@@ -1,7 +1,6 @@
 import { Flex, FlexProps, P, Span } from '@interlay/ui';
 
 import { CrossChainTransferMessage } from '../../../../types/cross-chain';
-import { Deposit } from '../../hooks/useGetDeposits';
 import { BridgeDetails } from '../BridgeDetails';
 import { BridgeStatusBadge } from '../BridgeStatusBadge';
 
@@ -17,7 +16,14 @@ const SubmittedStep = ({ message, ...props }: SubmittedStepProps): JSX.Element |
     <Flex direction='column' gap='spacing8' {...props}>
       <BridgeDetails amount={message?.amount} justifyContent='center' transferDirection={message?.direction} />
       <Flex direction='column' gap='spacing2'>
-        <BridgeStatusBadge deposit={message as unknown as Deposit} status='ongoing' />
+        {message && (
+          <BridgeStatusBadge
+            direction={message.direction}
+            status={message.status}
+            transactionHash={message.transactionHash}
+            waitTime={message.waitTime}
+          />
+        )}
         <P size='xs'>
           Your assets will be delivered shortly, with an estimated arrival time of{' '}
           <Span color='secondary'>{message?.waitTime} seconds</Span>. We will provide you with updates accordingly. You

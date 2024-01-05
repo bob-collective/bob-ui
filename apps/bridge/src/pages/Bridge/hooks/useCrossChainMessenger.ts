@@ -1,22 +1,9 @@
-import { useEffect, useState } from 'react';
-
-import { CrossChainMessenger, StandardBridgeAdapter, ETHBridgeAdapter } from '@eth-optimism/sdk';
-import { L1_CHAIN_ID, L2_CHAIN_ID } from '@gobob/wagmi';
-import { JsonRpcSigner, FallbackProvider, JsonRpcProvider } from '@ethersproject/providers';
+import { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } from '@eth-optimism/sdk';
+import { FallbackProvider, JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
+import { L1_CHAIN_ID, L2_CHAIN_ID, useNetwork } from '@gobob/wagmi';
+import { isL1Chain, isL2Chain } from '../utils/chain';
 import { useEthersProvider } from './useEthersProvider';
 import { useEthersSigner } from './useEthersSigner';
-
-// L2CrossDomainMessenger: Contract;
-// L2StandardBridge: Contract;
-// L2ToL1MessagePasser: Contract;
-// OVM_L1BlockNumber: Contract;
-// OVM_L2ToL1MessagePasser: Contract;
-// OVM_DeployerWhitelist: Contract;
-// OVM_ETH: Contract;
-// OVM_GasPriceOracle: Contract;
-// OVM_SequencerFeeVault: Contract;
-// WETH: Contract;
-// BedrockMessagePasser: Contract;
 
 // NOTE: had to be hardcoded - conduit SDK was not working because of CORS settings
 const conduitConfig = {
@@ -86,29 +73,33 @@ const useCrossChainMessenger = () => {
   const l2Provider = useEthersProvider({ chainId: L2_CHAIN_ID });
   const l1Signer = useEthersSigner({ chainId: L1_CHAIN_ID });
   const l2Signer = useEthersSigner({ chainId: L2_CHAIN_ID });
+  const { chain } = useNetwork();
 
-  const [depositMessenger, setDepositMessenger] = useState<CrossChainMessenger>();
-  const [withdrawMessenger, setWithdrawMessenger] = useState<CrossChainMessenger>();
+  // const [messenger, setMessenger] = useState<CrossChainMessenger | null>();
 
-  useEffect(() => {
-    // NOTE: use l1 signer and l2 provider for deposits.
-    const messenger = createCrossChainMessenger(l1Signer, l2Provider);
+  // useEffect(() => {
+  //   let createdMessenger: CrossChainMessenger | null = null;
 
-    if (messenger) {
-      setDepositMessenger(messenger);
-    }
-  }, [l1Signer, l2Provider]);
+  //   if (isL1Chain(chain)) {
+  //     createdMessenger = createCrossChainMessenger(l1Signer, l2Provider);
+  //   }
+  //   if (isL2Chain(chain)) {
+  //     createdMessenger = createCrossChainMessenger(l1Provider, l2Signer);
+  //   }
 
-  useEffect(() => {
-    // NOTE: use l1 provider and l2 signer for withdrawals.
-    const messenger = createCrossChainMessenger(l1Provider, l2Signer);
+  //   if (createdMessenger) {
+  //     setMessenger(createdMessenger);
+  //   }
+  // }, [chain, l1Provider, l1Signer, l2Provider, l2Signer]);
 
-    if (messenger) {
-      setWithdrawMessenger(messenger);
-    }
-  }, [l1Provider, l2Signer]);
-
-  return { deposit: depositMessenger, withdraw: withdrawMessenger };
+  return {
+    messenger: isL1Chain(chain)
+      ? createCrossChainMessenger(l1Signer, l2Provider)
+      : isL2Chain(chain)
+        ? createCrossChainMessenger(l1Provider, l2Signer)
+        : createCrossChainMessenger(l1Provider, l2Provider),
+    readMessenger: createCrossChainMessenger(l1Provider, l2Provider)
+  };
 };
 
 export { useCrossChainMessenger };

@@ -25,12 +25,12 @@ import { parseEther } from 'viem';
 import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 import { getDepositWaitTime } from '../../constants/bridge';
 import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
-import { useGetWithdraws } from '../../hooks/useGetWithdraws';
 import { isL2Chain } from '../../utils/chain';
 import { TransactionModal } from '../TransactionModal';
 import { StyledChain, StyledRadioCard } from './BridgeForm.style';
 import { ChainSelect } from './ChainSelect';
 import { ExternalBridgeCard } from './ExternalBridgeCard';
+import { useGetTransactions } from '../../hooks/useGetTransactions';
 
 enum BridgeEntity {
   BOB = 'bob',
@@ -47,10 +47,10 @@ const WithdrawForm = (): JSX.Element => {
 
   const [message, setMessage] = useState<CrossChainTransferMessage>();
 
-  const { withdraw: messenger } = useCrossChainMessenger();
+  const { messenger } = useCrossChainMessenger();
   const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
 
-  const { refetch: refetchWithdraws } = useGetWithdraws();
+  const { refetch: refetchTransactions } = useGetTransactions();
 
   const [amount, setAmount] = useState('');
 
@@ -60,7 +60,7 @@ const WithdrawForm = (): JSX.Element => {
     if (!isValidChain) {
       switchNetwork?.(L2_CHAIN_ID);
     }
-  }, [switchNetwork]);
+  }, [isValidChain, switchNetwork]);
 
   const handleChangeInput = async () => {
     const amount = form.values[BRIDGE_WITHDRAW_AMOUNT];
@@ -68,8 +68,13 @@ const WithdrawForm = (): JSX.Element => {
     if (!messenger || !amount) return;
 
     const amountInGwei = parseEther(amount);
-    const gasEstimate = await messenger.estimateGas.withdrawETH(amountInGwei.toString());
 
+    let gasEstimate;
+    try {
+      gasEstimate = await messenger.estimateGas.withdrawETH(amountInGwei.toString());
+    } catch (e) {
+      gasEstimate = parseEther('0');
+    }
     const message = {
       amount: amountInGwei,
       gasEstimate: BigInt(gasEstimate.toString()),
@@ -92,15 +97,25 @@ const WithdrawForm = (): JSX.Element => {
     const amountInGwei = parseEther(values[BRIDGE_WITHDRAW_AMOUNT]);
     const tx = await messenger.withdrawETH(amountInGwei.toString());
 
-    refetchWithdraws();
+    await tx.wait();
 
     const [waitTime, status] = await Promise.all([getDepositWaitTime(), messenger.getMessageStatus(tx)]);
 
     setMessage((currentMessage) => (currentMessage ? { ...currentMessage, waitTime, status } : undefined));
 
-    await messenger.waitForMessageStatus(tx.hash, MessageStatus.RELAYED);
+    const expectedStatus = MessageStatus.READY_TO_PROVE;
 
-    setMessage((currentMessage) => (currentMessage ? { ...currentMessage, status: MessageStatus.RELAYED } : undefined));
+    await messenger.waitForMessageStatus(tx.hash, expectedStatus);
+
+    await messenger.proveMessage(tx.hash);
+
+    console.log(message);
+
+    setMessage((currentMessage) =>
+      currentMessage ? { ...currentMessage, status: MessageStatus.IN_CHALLENGE_PERIOD } : undefined
+    );
+
+    refetchTransactions();
   };
 
   const initialValues = useMemo(

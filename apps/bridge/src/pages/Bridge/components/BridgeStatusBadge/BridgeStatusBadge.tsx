@@ -1,6 +1,26 @@
 import { Flex, FlexProps, Span, TextLink } from '@interlay/ui';
+import { MessageStatus, MessageDirection } from '@eth-optimism/sdk';
 
 import { StyledLoadingSpinner, StyledPill, StyledSpan } from './BridgeStatusBadge.style';
+import { useCountDown } from 'ahooks';
+import { addSeconds } from 'date-fns';
+
+const ChallengeBadge = ({ waitTime }: { waitTime: number }) => {
+  const [, formattedRes] = useCountDown({
+    targetDate: addSeconds(new Date(), waitTime)
+  });
+
+  const { hours, minutes, seconds } = formattedRes;
+
+  return (
+    <StyledPill $variant='green' alignItems='center' gap='spacing2'>
+      <StyledLoadingSpinner color='secondary' size='xs' thickness={3} />
+      <StyledSpan size='xs' weight='medium'>
+        Est » Challenge Period {hours}D {minutes}H {seconds}M
+      </StyledSpan>
+    </StyledPill>
+  );
+};
 
 // FIXME: rui will fix this later
 const CompleteSVG = () => (
@@ -19,34 +39,60 @@ const CompleteSVG = () => (
   </svg>
 );
 
-type Props = { status: 'ongoing' | 'completed' | 'failed'; waitTime: number; txUrl: string };
+type Props = { status: MessageStatus; direction: MessageDirection; waitTime: number; transactionHash: string };
 
 type InheritAttrs = Omit<FlexProps, keyof Props | 'children'>;
 
 type BridgeStatusBadgeProps = Props & InheritAttrs;
 
 const BridgeStatusBadge = ({
-  txUrl,
+  status: statusProp,
+  direction,
   waitTime,
-  status = 'completed',
+  transactionHash,
   justifyContent = 'space-between',
   alignItems = 'center',
   gap = 'spacing2',
   ...props
 }: BridgeStatusBadgeProps): JSX.Element | null => {
+  const status =
+    statusProp === MessageStatus.RELAYED
+      ? 'completed'
+      : statusProp === MessageStatus.FAILED_L1_TO_L2_MESSAGE
+        ? 'failed'
+        : 'ongoing';
+
+  const txUrl =
+    direction === MessageDirection.L1_TO_L2
+      ? `https://sepolia.etherscan.io/tx/${transactionHash}`
+      : `https://explorerl2new-puff-bob-jznbxtoq7h.t.conduit.xyz/tx/${transactionHash}`;
+
   const viewLink = (
     <TextLink external icon href={txUrl} size='xs'>
       View
     </TextLink>
   );
+  console.log(statusProp);
+
+  if (statusProp === MessageStatus.IN_CHALLENGE_PERIOD) {
+    return (
+      <Flex alignItems={alignItems} gap={gap} justifyContent={justifyContent} {...props}>
+        <ChallengeBadge waitTime={waitTime} />
+        {viewLink}
+      </Flex>
+    );
+  }
 
   if (status === 'ongoing') {
+    const label =
+      statusProp === MessageStatus.READY_TO_PROVE ? 'Waiting to be proved by L1' : `Est » ${waitTime} seconds`;
+
     return (
       <Flex alignItems={alignItems} gap={gap} justifyContent={justifyContent} {...props}>
         <StyledPill $variant='green' alignItems='center' gap='spacing2'>
           <StyledLoadingSpinner color='secondary' size='xs' thickness={3} />
           <StyledSpan size='xs' weight='medium'>
-            Est » {waitTime} seconds
+            {label}
           </StyledSpan>
         </StyledPill>
         {viewLink}

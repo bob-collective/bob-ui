@@ -22,7 +22,7 @@ import { isFormDisabled } from '../../../../lib/form/utils';
 import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 import { getDepositWaitTime } from '../../constants/bridge';
 import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
-import { useGetDeposits } from '../../hooks/useGetDeposits';
+import { useGetTransactions } from '../../hooks/useGetTransactions';
 import { isL1Chain } from '../../utils/chain';
 import { TransactionDetails } from '../TransactionDetails';
 import { TransactionModal } from '../TransactionModal';
@@ -35,21 +35,23 @@ const DepositForm = (): JSX.Element => {
   const { data: ethBalance } = useBalance({ address, chainId: L1_CHAIN_ID });
   const { getPrice } = usePrices();
 
-  const { deposit: messenger } = useCrossChainMessenger();
+  const { messenger } = useCrossChainMessenger();
 
-  const { refetch: refetchDeposits } = useGetDeposits();
+  const { refetch: refetchTransactions } = useGetTransactions();
 
   const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
+
+  const [message, setMessage] = useState<CrossChainTransferMessage>();
 
   const [amount, setAmount] = useState('');
 
   const isValidChain = isL1Chain(chain);
 
-  // useEffect(() => {
-  //   if (!isValidChain) {
-  //     switchNetwork?.(L1_CHAIN_ID);
-  //   }
-  // }, [switchNetwork, isValidChain]);
+  useEffect(() => {
+    if (!isValidChain) {
+      switchNetwork?.(L1_CHAIN_ID);
+    }
+  }, [switchNetwork, isValidChain]);
 
   const handleChangeInput = async () => {
     if (!messenger || !form.values[BRIDGE_DEPOSIT_AMOUNT]) {
@@ -85,7 +87,10 @@ const DepositForm = (): JSX.Element => {
     const amountInGwei = parseEther(values[BRIDGE_DEPOSIT_AMOUNT]);
     const tx = await messenger.depositETH(amountInGwei.toString());
 
-    refetchDeposits();
+    // TODO: check if necessary
+    //  await  tx.wait()
+
+    refetchTransactions();
 
     const [waitTime, status] = await Promise.all([getDepositWaitTime(), messenger.getMessageStatus(tx)]);
 
@@ -123,8 +128,6 @@ const DepositForm = (): JSX.Element => {
   });
 
   const isSubmitDisabled = !isValidChain || isFormDisabled(form);
-
-  const [message, setMessage] = useState<CrossChainTransferMessage>();
 
   const etherValueUSD = getPrice('ethereum') || 0;
   const valueUSD = new Big(form.values[BRIDGE_DEPOSIT_AMOUNT] || 0).mul(etherValueUSD).toNumber();

@@ -1,12 +1,16 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
 
-interface CrossChainTransferMessage {
+type PreCrossChainTransferMessage = {
   amount: bigint; // in wei
   gasEstimate: bigint; // in wei
   direction: MessageDirection;
-  waitTime?: number; // in seconds
-  status?: MessageStatus;
-  // NOTE: Add gas token later if needed.
-}
+  waitTime: number; // in seconds
+};
 
-export type { CrossChainTransferMessage };
+type CrossChainTransferMessage = PreCrossChainTransferMessage & {
+  status?: MessageStatus;
+  transactionHash?: string;
+  // NOTE: Add gas token later if needed.
+};
+
+export type { CrossChainTransferMessage, PreCrossChainTransferMessage };
