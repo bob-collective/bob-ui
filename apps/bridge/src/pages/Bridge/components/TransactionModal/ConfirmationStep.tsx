@@ -4,13 +4,18 @@ import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 import { BridgeDetails } from '../BridgeDetails';
 import { TransactionDetails } from '../TransactionDetails';
 
-type Props = { message: CrossChainTransferMessage | undefined };
+type ConfirmationStepVariant = 'confirmation' | 'processing';
+
+type Props = { variant?: ConfirmationStepVariant; message: CrossChainTransferMessage | undefined };
 
 type InheritAttrs = Omit<FlexProps, keyof Props | 'children'>;
 
 type ConfirmationStepProps = Props & InheritAttrs;
 
-const ConfirmationStep = ({ message, ...props }: ConfirmationStepProps): JSX.Element | null => {
+const ConfirmationStep = ({ variant = 'confirmation', message, ...props }: ConfirmationStepProps): JSX.Element => {
+  const description =
+    variant === 'confirmation' ? 'Please Confirm transfer in wallet' : 'Your transaction is being proccessed';
+
   return (
     <Flex alignItems='center' direction='column' gap='spacing8' {...props}>
       <Spinner color='secondary' size='xl2' thickness={8} />
@@ -22,7 +27,7 @@ const ConfirmationStep = ({ message, ...props }: ConfirmationStepProps): JSX.Ele
       />
       <Flex alignSelf='normal' direction='column' gap='spacing4'>
         <P align='center' size='xs' weight='medium'>
-          Please Confirm transfer in wallet.
+          {description}
         </P>
         <TransactionDetails message={message} />
       </Flex>
@@ -31,4 +36,4 @@ const ConfirmationStep = ({ message, ...props }: ConfirmationStepProps): JSX.Ele
 };
 
 export { ConfirmationStep };
-export type { ConfirmationStepProps };
+export type { ConfirmationStepProps, ConfirmationStepVariant };

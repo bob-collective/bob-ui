@@ -73,14 +73,14 @@ const getTransactions = async (
 const useGetTransactions = () => {
   const l1Provider = useEthersProvider({ chainId: L1_CHAIN_ID });
   const l2Provider = useEthersProvider({ chainId: L2_CHAIN_ID });
-  const { messenger } = useCrossChainMessenger();
+  const { readMessenger } = useCrossChainMessenger();
 
   const { address } = useAccount();
 
   return useQuery({
     queryKey: ['transactions', address],
-    queryFn: () => getTransactions(address, messenger, l1Provider, l2Provider),
-    enabled: !!address && !!messenger,
+    queryFn: () => getTransactions(address, readMessenger, l1Provider, l2Provider),
+    enabled: !!address && !!readMessenger,
     refetchInterval: 5 * 1000 // 15 seconds
   });
 };

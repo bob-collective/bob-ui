@@ -1,4 +1,4 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk';
+import { MessageDirection } from '@eth-optimism/sdk';
 import { AuthCTA } from '@gobob/ui';
 import { useForm } from '@interlay/hooks';
 import { InformationCircle } from '@interlay/icons';
@@ -17,7 +17,7 @@ import {
 import { isFormDisabled } from '../../../../lib/form/utils';
 import { TransactionDetails } from '../TransactionDetails';
 
-import { usePrices } from '@gobob/react-query';
+import { useMutation, usePrices } from '@gobob/react-query';
 import { L2_CHAIN_ID, useAccount, useBalance, useNetwork, useSwitchNetwork } from '@gobob/wagmi';
 import Big from 'big.js';
 import { useDebounce } from 'react-use';
@@ -25,12 +25,13 @@ import { parseEther } from 'viem';
 import { CrossChainTransferMessage } from '../../../../types/cross-chain';
 import { getDepositWaitTime } from '../../constants/bridge';
 import { useCrossChainMessenger } from '../../hooks/useCrossChainMessenger';
+import { useGetTransactions } from '../../hooks/useGetTransactions';
 import { isL2Chain } from '../../utils/chain';
 import { TransactionModal } from '../TransactionModal';
+import { TransactionModalVariant } from '../TransactionModal/TransactionModal';
 import { StyledChain, StyledRadioCard } from './BridgeForm.style';
 import { ChainSelect } from './ChainSelect';
 import { ExternalBridgeCard } from './ExternalBridgeCard';
-import { useGetTransactions } from '../../hooks/useGetTransactions';
 
 enum BridgeEntity {
   BOB = 'bob',
@@ -45,16 +46,49 @@ const WithdrawForm = (): JSX.Element => {
   const { data: ethBalance } = useBalance({ address, chainId: L2_CHAIN_ID });
   const { getPrice } = usePrices();
 
-  const [message, setMessage] = useState<CrossChainTransferMessage>();
+  const [transactionModal, setTransactionModal] = useState<{ isOpen: boolean; variant?: TransactionModalVariant }>({
+    isOpen: false,
+    variant: 'confirmation'
+  });
+
+  const [message, setMessage] = useState<CrossChainTransferMessage | undefined>(undefined);
 
   const { messenger } = useCrossChainMessenger();
-  const [isTransactionModalOpen, setTransactionModalOpen] = useState(false);
 
   const { refetch: refetchTransactions } = useGetTransactions();
 
   const [amount, setAmount] = useState('');
 
   const isValidChain = isL2Chain(chain);
+
+  const mutation = useMutation({
+    mutationKey: ['withdraw', address],
+    mutationFn: async (amount: string) => {
+      if (!messenger) {
+        throw new Error('Missing messenger');
+      }
+
+      setTransactionModal({ isOpen: true });
+
+      const amountInGwei = parseEther(amount);
+      const tx = await messenger.withdrawETH(amountInGwei.toString());
+
+      setTransactionModal((s) => ({ ...s, variant: 'processing' }));
+
+      const [, waitTime, status] = await Promise.all([
+        tx.wait(),
+        messenger.estimateMessageWaitTimeSeconds(tx),
+        messenger.getMessageStatus(tx)
+      ]);
+
+      setTransactionModal((s) => ({ ...s, variant: 'submitted' }));
+
+      setMessage((currentMessage) => (currentMessage ? { ...currentMessage, waitTime, status } : undefined));
+    },
+    onSuccess: () => {
+      refetchTransactions();
+    }
+  });
 
   useEffect(() => {
     if (!isValidChain) {
@@ -88,34 +122,13 @@ const WithdrawForm = (): JSX.Element => {
   useDebounce(handleChangeInput, 500, [amount]);
 
   const handleSubmit = async (values: BridgeWithdrawFormValues) => {
-    if (!messenger || !values[BRIDGE_WITHDRAW_AMOUNT] || !message) {
+    const amount = values[BRIDGE_WITHDRAW_AMOUNT];
+
+    if (!messenger || !amount || !message) {
       return;
     }
 
-    setTransactionModalOpen(true);
-
-    const amountInGwei = parseEther(values[BRIDGE_WITHDRAW_AMOUNT]);
-    const tx = await messenger.withdrawETH(amountInGwei.toString());
-
-    await tx.wait();
-
-    const [waitTime, status] = await Promise.all([getDepositWaitTime(), messenger.getMessageStatus(tx)]);
-
-    setMessage((currentMessage) => (currentMessage ? { ...currentMessage, waitTime, status } : undefined));
-
-    const expectedStatus = MessageStatus.READY_TO_PROVE;
-
-    await messenger.waitForMessageStatus(tx.hash, expectedStatus);
-
-    await messenger.proveMessage(tx.hash);
-
-    console.log(message);
-
-    setMessage((currentMessage) =>
-      currentMessage ? { ...currentMessage, status: MessageStatus.IN_CHALLENGE_PERIOD } : undefined
-    );
-
-    refetchTransactions();
+    mutation.mutate(amount);
   };
 
   const initialValues = useMemo(
@@ -148,7 +161,7 @@ const WithdrawForm = (): JSX.Element => {
   };
 
   const handleClose = () => {
-    setTransactionModalOpen(false);
+    setTransactionModal({ isOpen: false });
   };
 
   const isSubmitDisabled = !isValidChain || isFormDisabled(form);
@@ -229,7 +242,7 @@ const WithdrawForm = (): JSX.Element => {
           </Flex>
         </form>
       </Flex>
-      <TransactionModal isOpen={isTransactionModalOpen} message={message} onClose={handleClose} />
+      <TransactionModal {...transactionModal} message={message} onClose={handleClose} />
     </>
   );
 };

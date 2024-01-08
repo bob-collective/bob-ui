@@ -1,10 +1,10 @@
 import { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } from '@eth-optimism/sdk';
 import { FallbackProvider, JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
-import { L1_CHAIN_ID, L2_CHAIN_ID, useNetwork } from '@gobob/wagmi';
+import { L1_CHAIN_ID, L2_CHAIN_ID, L2_RPC_URL, useNetwork } from '@gobob/wagmi';
 import { isL1Chain, isL2Chain } from '../utils/chain';
 import { useEthersProvider } from './useEthersProvider';
 import { useEthersSigner } from './useEthersSigner';
-
+import { ethers } from 'ethers';
 // NOTE: had to be hardcoded - conduit SDK was not working because of CORS settings
 const conduitConfig = {
   l1ChainId: L1_CHAIN_ID,
@@ -75,29 +75,14 @@ const useCrossChainMessenger = () => {
   const l2Signer = useEthersSigner({ chainId: L2_CHAIN_ID });
   const { chain } = useNetwork();
 
-  // const [messenger, setMessenger] = useState<CrossChainMessenger | null>();
-
-  // useEffect(() => {
-  //   let createdMessenger: CrossChainMessenger | null = null;
-
-  //   if (isL1Chain(chain)) {
-  //     createdMessenger = createCrossChainMessenger(l1Signer, l2Provider);
-  //   }
-  //   if (isL2Chain(chain)) {
-  //     createdMessenger = createCrossChainMessenger(l1Provider, l2Signer);
-  //   }
-
-  //   if (createdMessenger) {
-  //     setMessenger(createdMessenger);
-  //   }
-  // }, [chain, l1Provider, l1Signer, l2Provider, l2Signer]);
+  console.log(l2Provider);
 
   return {
     messenger: isL1Chain(chain)
-      ? createCrossChainMessenger(l1Signer, l2Provider)
+      ? createCrossChainMessenger(l1Signer, new ethers.providers.JsonRpcProvider(L2_RPC_URL))
       : isL2Chain(chain)
-        ? createCrossChainMessenger(l1Provider, l2Signer)
-        : createCrossChainMessenger(l1Provider, l2Provider),
+        ? createCrossChainMessenger(l1Signer, l2Signer)
+        : createCrossChainMessenger(l1Signer, l2Provider),
     readMessenger: createCrossChainMessenger(l1Provider, l2Provider)
   };
 };

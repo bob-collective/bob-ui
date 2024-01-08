@@ -55,13 +55,6 @@ const BridgeStatusBadge = ({
   gap = 'spacing2',
   ...props
 }: BridgeStatusBadgeProps): JSX.Element | null => {
-  const status =
-    statusProp === MessageStatus.RELAYED
-      ? 'completed'
-      : statusProp === MessageStatus.FAILED_L1_TO_L2_MESSAGE
-        ? 'failed'
-        : 'ongoing';
-
   const txUrl =
     direction === MessageDirection.L1_TO_L2
       ? `https://sepolia.etherscan.io/tx/${transactionHash}`
@@ -72,7 +65,6 @@ const BridgeStatusBadge = ({
       View
     </TextLink>
   );
-  console.log(statusProp);
 
   if (statusProp === MessageStatus.IN_CHALLENGE_PERIOD) {
     return (
@@ -83,9 +75,20 @@ const BridgeStatusBadge = ({
     );
   }
 
-  if (status === 'ongoing') {
+  if (
+    statusProp === MessageStatus.READY_TO_PROVE ||
+    statusProp === MessageStatus.STATE_ROOT_NOT_PUBLISHED ||
+    statusProp === MessageStatus.READY_FOR_RELAY ||
+    statusProp === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE
+  ) {
     const label =
-      statusProp === MessageStatus.READY_TO_PROVE ? 'Waiting to be proved by L1' : `Est » ${waitTime} seconds`;
+      statusProp === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE
+        ? `Est » ${waitTime} seconds`
+        : statusProp === MessageStatus.READY_TO_PROVE
+          ? 'Waiting to be proved by L1'
+          : statusProp === MessageStatus.STATE_ROOT_NOT_PUBLISHED
+            ? 'Trasmitting withdraw message to L1'
+            : 'Waiting to be relayed';
 
     return (
       <Flex alignItems={alignItems} gap={gap} justifyContent={justifyContent} {...props}>
@@ -100,12 +103,26 @@ const BridgeStatusBadge = ({
     );
   }
 
+  if (statusProp === MessageStatus.FAILED_L1_TO_L2_MESSAGE) {
+    return (
+      <Flex alignItems={alignItems} gap={gap} justifyContent={justifyContent} {...props}>
+        <StyledPill $variant='normal' alignItems='center' gap='spacing2'>
+          <CompleteSVG />
+          <Span size='xs' weight='medium'>
+            Bridge failed
+          </Span>
+        </StyledPill>
+        {viewLink}
+      </Flex>
+    );
+  }
+
   return (
     <Flex alignItems={alignItems} gap={gap} justifyContent={justifyContent} {...props}>
       <StyledPill $variant='normal' alignItems='center' gap='spacing2'>
-        {<CompleteSVG />}
+        <CompleteSVG />
         <Span size='xs' weight='medium'>
-          Bridge {status === 'completed' ? 'complete' : 'failed'}
+          Bridge completed
         </Span>
       </StyledPill>
       {viewLink}

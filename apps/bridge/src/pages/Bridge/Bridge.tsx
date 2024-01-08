@@ -31,9 +31,35 @@ const Bridge = (): JSX.Element => {
     return b.logIndex - a.logIndex;
   });
 
-  const latestDeposits = sortedTransactions?.slice(0, 6);
+  const latestDeposits = sortedTransactions?.slice(0, 10);
 
-  console.log(latestDeposits);
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     if (!transactions || !messenger) return;
+
+  //     await Promise.all(
+  //       transactions.map(async (t) => {
+  //         if (t.status !== MessageStatus.READY_TO_PROVE) return;
+  //         try {
+  //           console.log('here');
+  //           await messenger?.proveMessage(t.transactionHash);
+
+  //           console.log('proven');
+
+  //           await messenger.waitForMessageStatus(t.transactionHash, MessageStatus.READY_FOR_RELAY);
+
+  //           console.log('Ready to relay');
+  //         } catch (e) {
+  //           throw new Error(e);
+  //         }
+  //       })
+  //     );
+  //   };
+
+  //   if (transactions) {
+  //     getData();
+  //   }
+  // }, [transactions, messenger]);
 
   return (
     <StyledBridge gap='spacing4'>
@@ -43,7 +69,7 @@ const Bridge = (): JSX.Element => {
       </StyledSection>
       <StyledSection direction='column' flex='0 0 50%' gap='spacing4'>
         <H2 size='base'>Activity</H2>
-        {isTransactionLoading ? (
+        {!!address && isTransactionLoading ? (
           <LoadingCard />
         ) : (
           <>
